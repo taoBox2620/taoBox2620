@@ -513,50 +513,7 @@ CETV早期教育,http://58.32.18.53:4022/rtp/233.18.204.187:5140
 
 测试视频,#genre#
 
-CCTV1,http://171.38.107.33:8282/tsfile/live/0001_1.m3u8?key=txiptv&playlive=1&authid=0
-CCTV2,http://171.38.107.33:8282/tsfile/live/0002_1.m3u8?key=txiptv&playlive=1&authid=0
-CCTV3,http://171.38.107.33:8282/tsfile/live/1014_1.m3u8?key=txiptv&playlive=1&authid=0
-CCTV4,http://171.38.107.33:8282/tsfile/live/0004_1.m3u8?key=txiptv&playlive=1&authid=0
-CCTV5,http://171.38.107.33:8282/tsfile/live/1016_1.m3u8?key=txiptv&playlive=1&authid=0
-CCTV5+,http://171.38.107.33:8282/tsfile/live/1028_1.m3u8?key=txiptv&playlive=1&authid=0
-CCTV6,http://171.38.107.33:8282/tsfile/live/1017_1.m3u8?key=txiptv&playlive=1&authid=0
-CCTV7,http://171.38.107.33:8282/tsfile/live/0007_1.m3u8?key=txiptv&playlive=1&authid=0
-CCTV8,http://171.38.107.33:8282/tsfile/live/1019_1.m3u8?key=txiptv&playlive=1&authid=0
-CCTV9,http://171.38.107.33:8282/tsfile/live/0009_1.m3u8?key=txiptv&playlive=1&authid=0
-CCTV10,http://171.38.107.33:8282/tsfile/live/0010_1.m3u8?key=txiptv&playlive=1&authid=0
-CCTV11,http://171.38.107.33:8282/tsfile/live/1021_1.m3u8?key=txiptv&playlive=0&authid=0
-CCTV11,http://171.38.107.33:8282/tsfile/live/1022_1.m3u8?key=txiptv&playlive=1&authid=0
-CCTV12,http://171.38.107.33:8282/tsfile/live/0012_1.m3u8?key=txiptv&playlive=1&authid=0
-CCTV13,http://171.38.107.33:8282/tsfile/live/1024_1.m3u8?key=txiptv&playlive=1&authid=0
-CCTV14,http://171.38.107.33:8282/tsfile/live/1026_1.m3u8?key=txiptv&playlive=1&authid=0
-CCTV15,http://171.38.107.33:8282/tsfile/live/1025_1.m3u8?key=txiptv&playlive=1&authid=0
-CCTV17,http://171.38.107.33:8282/tsfile/live/1029_1.m3u8?key=txiptv&playlive=1&authid=0
-广东卫视,http://171.38.107.33:8282/tsfile/live/1031_1.m3u8?key=txiptv&playlive=1&authid=0
-东方卫视,http://171.38.107.33:8282/tsfile/live/1033_1.m3u8?key=txiptv&playlive=1&authid=0
-深圳卫视,http://171.38.107.33:8282/tsfile/live/1036_1.m3u8?key=txiptv&playlive=1&authid=0
-天津卫视,http://171.38.107.33:8282/tsfile/live/1037_1.m3u8?key=txiptv&playlive=1&authid=0
-湖北卫视,http://171.38.107.33:8282/tsfile/live/1038_1.m3u8?key=txiptv&playlive=1&authid=0
-山东卫视,http://171.38.107.33:8282/tsfile/live/1039_1.m3u8?key=txiptv&playlive=1&authid=0
-黑龙江卫视,http://171.38.107.33:8282/tsfile/live/1040_1.m3u8?key=txiptv&playlive=1&authid=0
-河北卫视,http://171.38.107.33:8282/tsfile/live/1041_1.m3u8?key=txiptv&playlive=1&authid=0
-贵州卫视,http://171.38.107.33:8282/tsfile/live/1042_1.m3u8?key=txiptv&playlive=1&authid=0
-东南卫视,http://171.38.107.33:8282/tsfile/live/1043_1.m3u8?key=txiptv&playlive=1&authid=0
-辽宁卫视,http://171.38.107.33:8282/tsfile/live/1044_1.m3u8?key=txiptv&playlive=1&authid=0
-安徽卫视,http://171.38.107.33:8282/tsfile/live/1045_1.m3u8?key=txiptv&playlive=1&authid=0
-四川卫视,http://171.38.107.33:8282/tsfile/live/1048_1.m3u8?key=txiptv&playlive=1&authid=0
-广西卫视,http://171.38.107.33:8282/tsfile/live/1030_1.m3u8?key=txiptv&playlive=1&authid=0
-重庆卫视,http://171.38.107.33:8282/tsfile/live/1050_1.m3u8?key=txiptv&playlive=1&authid=0
-吉林卫视,http://171.38.107.33:8282/tsfile/live/1059_1.m3u8?key=txiptv&playlive=1&authid=0
-湖南卫视,http://171.38.107.33:8282/tsfile/live/1052_1.m3u8?key=txiptv&playlive=1&authid=0
-浙江卫视,http://171.38.107.33:8282/tsfile/live/1053_1.m3u8?key=txiptv&playlive=1&authid=0
-江西卫视,http://171.38.107.33:8282/tsfile/live/1027_1.m3u8?key=txiptv&playlive=0&authid=0
-河南卫视,http://171.38.107.33:8282/tsfile/live/1015_1.m3u8?key=txiptv&playlive=1&authid=0
-甘肃卫视,http://171.38.107.33:8282/tsfile/live/1046_1.m3u8?key=txiptv&playlive=1&authid=0
-江西卫视,http://171.38.107.33:8282/tsfile/live/1047_1.m3u8?key=txiptv&playlive=1&authid=0
-内蒙古卫视,http://171.38.107.33:8282/tsfile/live/0109_1.m3u8?key=txiptv&playlive=1&authid=0
-西藏卫视,http://171.38.107.33:8282/tsfile/live/0111_1.m3u8?key=txiptv&playlive=1&authid=0
-新疆卫视,http://171.38.107.33:8282/tsfile/live/0110_1.m3u8?key=txiptv&playlive=1&authid=0
-甘肃卫视,http://171.38.107.33:8282/tsfile/live/1023_1.m3u8?key=txiptv&playlive=1&authid=0
+
 CCTV1,http://223.95.198.3:8000/hls/1/index.m3u8
 CCTV2 ,http://223.95.198.3:8000/hls/2/index.m3u8
 CCTV3 ,http://223.95.198.3:8000/hls/3/index.m3u8
