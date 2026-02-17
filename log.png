@@ -380,7 +380,7 @@ CCTV-14,http://27.41.245.32:801/hls/14/index.m3u8
 CCTV-15,http://27.41.245.32:801/hls/15/index.m3u8
 CCTV-17,http://27.41.245.32:801/hls/16/index.m3u8
 
-卫视,#genre#
+
 广东珠江,http://27.41.245.32:801/hls/25/index.m3u8
 深圳卫视,http://27.41.245.32:801/hls/26/index.m3u8
 东方卫视,http://27.41.245.32:801/hls/27/index.m3u8
