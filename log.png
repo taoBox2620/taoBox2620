@@ -7,8 +7,8 @@
 咪咕4K1,http://anfeind1.kmdns.net:19999/migunohosts.php?channel-id=FifastbLive&Contentid=3000000010000005180&livemode=1&stbId=toShengfen&/PLTV/&
 咪咕4K2,http://anfeind1.kmdns.net:19999/migunohosts.php?channel-id=FifastbLive&Contentid=3000000010000015686&livemode=1&stbId=toShengfen&/PLTV/&
 CCTV1,http://www.xymm.de5.net:8880/play/1.m3u8
-CCTV2,http://www.xymm.de5.net:8880/play/2.m3u8
-CCTV3,http://www.xymm.de5.net:8880/play/3.m3u8
+CCTV2,http://www.xymm.de5.net:8880/play/98.m3u8
+CCTV3,http://www.xymm.de5.net:8880/play/195.m3u8
 CCTV4,http://www.xymm.de5.net:8880/play/4.m3u8
 CCTV5,http://www.xymm.de5.net:8880/play/5.m3u8
 CCTV5+,http://www.xymm.de5.net:8880/play/6.m3u8
@@ -16,11 +16,11 @@ CCTV6,http://www.xymm.de5.net:8880/play/7.m3u8
 CCTV7,http://www.xymm.de5.net:8880/play/8.m3u8
 CCTV8,http://www.xymm.de5.net:8880/play/9.m3u8
 CCTV9,http://www.xymm.de5.net:8880/play/10.m3u8
-CCTV10,http://www.xymm.de5.net:8880/play/11.m3u8
+CCTV10,http://www.xymm.de5.net:8880/play/107.m3u8
 CCTV11,http://www.xymm.de5.net:8880/play/12.m3u8
 CCTV12,http://www.xymm.de5.net:8880/play/13.m3u8
 CCTV13,http://www.xymm.de5.net:8880/play/14.m3u8
-CCTV14,http://www.xymm.de5.net:8880/play/15.m3u8
+CCTV14,http://www.xymm.de5.net:8880/play/207.m3u8
 CCTV15,http://www.xymm.de5.net:8880/play/16.m3u8
 CCTV16,http://171.118.154.11:9003/hls/17/index.m3u8
 CCTV17,http://www.xymm.de5.net:8880/play/17.m3u8
