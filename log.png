@@ -208,7 +208,7 @@ CCTV17,http://tv.sohu.blog/d/fjbst.php?id=176
 内蒙古卫视,http://tv.sohu.blog/d/fjbst.php?id=213
 黑龙江卫视,http://tv.sohu.blog/d/fjbst.php?id=188
 
-央视频道,#genre#
+广东深圳,#genre#
 CCTV1,http://36.36.200.198:44330/tsfile/live/0001_1.m3u8?key=txiptv&playlive=0&authid=0
 CCTV2,http://36.36.200.198:44330/tsfile/live/0002_1.m3u8?key=txiptv&playlive=0&authid=0
 CCTV3,http://36.36.200.198:44330/tsfile/live/0003_1.m3u8?key=txiptv&playlive=0&authid=0
@@ -244,7 +244,7 @@ CCTV16,http://36.36.200.198:44330/tsfile/live/0017_1.m3u8?key=txiptv&playlive=0&
 重庆卫视,http://36.36.200.198:44330/tsfile/live/0142_1.m3u8?key=txiptv&playlive=0&authid=0
 陕西卫视,http://36.36.200.198:44330/tsfile/live/0136_1.m3u8?key=txiptv&playlive=0&authid=0
 黑龙江卫视,http://36.36.200.198:44330/tsfile/live/0143_1.m3u8?key=txiptv&playlive=0&authid=0
-河南酒店,#genre#
+深圳移动,#genre#
 CCTV1,http://183.129.255.66:8480/hls/1/index.m3u8
 CCTV2,http://183.129.255.66:8480/hls/2/index.m3u8
 CCTV3,http://183.129.255.66:8480/hls/3/index.m3u8
@@ -298,7 +298,7 @@ CCTV17,http://183.129.255.66:8480/hls/18/index.m3u8
 三沙卫视,http://183.237.71.182:40000/hls/59/index.m3u8
 延边卫视,http://183.237.71.182:40000/hls/60/index.m3u8
 
-央卫视频,#genre#
+河南濮阳,#genre#
 CCTV1,http://litao1100.wicp.io:9901/tsfile/live/1000_1.m3u8?key=txiptv&playlive=！1&authid=0
 CCTV2,http://litao1100.wicp.io:9901/tsfile/live/1001_1.m3u8?key=txiptv&playlive=1&authid=0
 CCTV3,http://litao1100.wicp.io:9901/tsfile/live/1002_1.m3u8?key=txiptv&playlive=1&authid=0
@@ -347,7 +347,7 @@ CCTV15,http://litao1100.wicp.io:9901/tsfile/live/1025_1.m3u8?key=txiptv&playlive
 福建东南,http://litao1100.wicp.io:9901/tsfile/live/1032_1.m3u8?key=txiptv&playlive=1&authid=0
 河南公共,http://litao1100.wicp.io:9901/tsfile/live/1033_1.m3u8?key=txiptv&playlive=1&authid=0
 河南新农村,http://litao1100.wicp.io:9901/tsfile/live/1034_1.m3u8?key=txiptv&playlive=1&authid=0
-migu直播,#genre#
+咪咕直播,#genre#
 CCTV1综合,http://47.104.163.156:8123/migu720p.php?id=608807420
 CCTV2财经,http://47.104.163.156:8123/migu720p.php?id=631780532
 CCTV3综艺,http://47.104.163.156:8123/migu720p.php?id=624878271
@@ -455,7 +455,7 @@ CCTV8K,http://43.156.8.127:5050/ysp?id=2026774101&pid=600156816&q=fhd
 云南卫视,http://43.156.8.127:5050/ysp?id=2025561303&pid=600190402&q=fhd
 吉林卫视,http://43.156.8.127:5050/ysp?id=2025561503&pid=600190405&q=fhd
 青海卫视,http://43.156.8.127:5050/ysp?id=2025559103&pid=600190406&q=fhd
-北方广电,#genre#
+青岛广电,#genre#
 CCTV-1,http://47.104.163.156:50/北方广电.php?id=488
 CCTV-2,http://47.104.163.156:50/北方广电.php?id=061
 CCTV-3,http://47.104.163.156:50/北方广电.php?id=062
@@ -522,7 +522,7 @@ CGTN-俄语,http://47.104.163.156:50/北方广电.php?id=309
 吉林延边卫视,http://47.104.163.156:50/北方广电.php?id=117
 北京卡酷少儿,http://47.104.163.156:50/北方广电.php?id=106
 
-内蒙古,#genre#
+蒙古联通,#genre#
 CCTV1,http://124.67.68.139:4022/udp/239.125.2.66:4120     内蒙古Nei Mongol
 CCTV2,http://124.67.68.139:4022/udp/239.125.2.65:4120
 CCTV3,http://124.67.68.139:4022/udp/239.125.2.52:4120
@@ -596,7 +596,7 @@ CCTV17,http://124.67.68.139:4022/udp/239.125.2.204:4120
 重庆卫视,http://124.67.68.139:4022/udp/239.125.1.168:4130
 浙江卫视,http://124.67.68.139:4022/udp/239.125.1.159:4130
 河北卫视,http://124.67.68.139:4022/udp/239.125.1.169:4130
-
+湖北移动,#genre#
 CCTV1,http://120.202.94.181:9446/tsfile/live/0001_1.m3u8?key=txiptv&playlive=0&authid=0
 
 CCTV2,http://120.202.94.181:9446/tsfile/live/0002_1.m3u8?key=txiptv&playlive=0&authid=0
@@ -642,7 +642,7 @@ CCTV15,http://120.202.94.181:9446/tsfile/live/0015_1.m3u8?key=txiptv&playlive=0&
 深圳卫视,http://120.202.94.181:9446/tsfile/live/0126_1.m3u8?key=txiptv&playlive=0&authid=0
 
 
-河北电信,#genre#
+河南联通,#genre#
 CCTV1,http://yhms.aylzline.top:8899/rtp/225.1.2.47:10276
 CCTV1,http://lysj.aylzline.top:8899/rtp/225.1.2.47:10276
 CCTV1,http://zczb.aylzline.top:8899/rtp/225.1.2.47:10276
@@ -777,7 +777,7 @@ CCTV4美洲,http://zczb.aylzline.top:8899/rtp/225.1.2.183:11824
 山西卫视,http://yhms.aylzline.top:8899/rtp/225.1.2.37:10216
 
 
-甘肃电信,#genre#
+堪萨斯城,#genre#
 
 CCTV1,http://74.91.26.218:82/live/cctv1hd.m3u8
 CCTV2,http://74.91.26.218:82/live/cctv2hd.m3u8
@@ -935,7 +935,7 @@ CCTV17,http://180.171.212.49:8654/rtp/233.18.204.83:5140
 三沙卫视,http://180.171.212.49:8654/rtp/233.18.204.172:5140
 金鹰卡通,http://180.171.212.49:8654/rtp/233.18.204.113:5140
 
-陕西电信,#genre#
+湖南移动,#genre#
 CCTV1,http://111.8.242.103:9999/tsfile/live/0001_1.m3u8?key=txiptv&playlive=1&authid=0
 CCTV2,http://111.8.242.103:9999/tsfile/live/1002_1.m3u8?key=txiptv&playlive=1&authid=0
 CCTV3,http://121.19.134.204:808/tsfile/live/0003_1.m3u8?key=txiptv&playlive=1&authid=0
@@ -1084,7 +1084,7 @@ CCTV17,http://69.30.246.194/live/cctv17.m3u8$堪萨斯城
 吉林卫视,http://116.76.254.170:44330/tsfile/live/0116_2.m3u8?key=txiptv&playlive=0&authid=0$天威视讯
 黑龙江卫视,http://116.76.254.170:44330/tsfile/live/0143_1.m3u8?key=txiptv&playlive=0&authid=0$天威视讯
 
-联通直播,#genre#
+北京联通,#genre#
 
 CCTV1,http://111.228.4.117:6789/migu720p.php?id=608807420
 CCTV2,http://111.228.4.117:6789/migu720p.php?id=631780532
@@ -1120,7 +1120,7 @@ CHC影迷电影,http://111.228.4.117:6789/migu720p.php?id=952383261
 CHC家庭影院,http://111.228.4.117:6789/migu720p.php?id=644368373
 CHC动作电影,http://111.228.4.117:6789/migu720p.php?id=644368714
 
-电信直播,#genre#
+四川成都,#genre#
 CCTV1,http://139.155.89.87:1000/608807420
 CCTV2,http://139.155.89.87:1000/631780532
 CCTV3,http://139.155.89.87:1000/624878271
@@ -1214,7 +1214,7 @@ CETV4,http://139.155.89.87:1000/923287339
 嘉佳卡通,http://139.155.89.87:1000/614952364
 经典动画大集合,http://139.155.89.87:1000/629942219
 新动漫,http://139.155.89.87:1000/961930269
-测试视频,#genre#
+宁波移动,#genre#
 
 
 CCTV1,http://223.95.198.3:8000/hls/1/index.m3u8
@@ -1262,7 +1262,7 @@ CCTV17 ,http://223.95.198.3:8000/hls/17/index.m3u8
 贵州卫视,http://223.95.198.3:8000/hls/46/index.m3u8
 青海卫视,http://223.95.198.3:8000/hls/47/index.m3u8
 
-咪咕直播,#genre#
+河北保定,#genre#
 CCTV1,http://27.129.145.110:4433/hls/1/index.m3u8
 CCTV2 ,http://27.129.145.110:4433/hls/2/index.m3u8
 CCTV3,http://27.129.145.110:4433/hls/3/index.m3u8
@@ -1301,7 +1301,7 @@ CCTV17,http://27.129.145.110:4433/hls/17/index.m3u8
 东方卫视,http://27.129.145.110:4433/hls/40/index.m3u8
 
 
-西藏酒店,#genre#
+湖南电信,#genre#
 CCTV1,http://113.241.133.223:9901/tsfile/live/0001_1.m3u8?key=txiptv&playlive=1&authid=0
 CCTV2,http://113.241.133.223:9901/tsfile/live/0002_1.m3u8?key=txiptv&playlive=1&authid=0
 CCTV3,http://113.241.133.223:9901/tsfile/live/0003_1.m3u8?key=txiptv&playlive=1&authid=0
