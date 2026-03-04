@@ -80,6 +80,37 @@ CCTV17,http://223.95.198.3:8000/hls/17/index.m3u8
 云南卫视,http://223.95.198.3:8000/hls/45/index.m3u8
 贵州卫视,http://223.95.198.3:8000/hls/46/index.m3u8
 青海卫视,http://223.95.198.3:8000/hls/47/index.m3u8
+
+杭州电信,#genre#
+CCTV1,http://ms.fxim.net:808/hls/1/index.m3u8
+CCTV2,http://ms.fxim.net:808/hls/2/index.m3u8
+CCTV3,http://ms.fxim.net:808/hls/3/index.m3u8
+CCTV4,http://ms.fxim.net:808/hls/4/index.m3u8
+CCTV5,http://ms.fxim.net:808/hls/5/index.m3u8
+CCTV6,http://ms.fxim.net:808/hls/6/index.m3u8
+CCTV7,http://ms.fxim.net:808/hls/7/index.m3u8
+CCTV8,http://ms.fxim.net:808/hls/8/index.m3u8
+CCTV9,http://ms.fxim.net:808/hls/9/index.m3u8
+CCTV10,http://ms.fxim.net:808/hls/10/index.m3u8
+CCTV11,http://ms.fxim.net:808/hls/11/index.m3u8
+CCTV12,http://ms.fxim.net:808/hls/12/index.m3u8
+CCTV13,http://ms.fxim.net:808/hls/13/index.m3u8
+CCTV14,http://ms.fxim.net:808/hls/14/index.m3u8
+CCTV15,http://ms.fxim.net:808/hls/15/index.m3u8
+CCTV16,http://ms.fxim.net:808/hls/16/index.m3u8
+CCTV17,http://ms.fxim.net:808/hls/17/index.m3u8
+浙江卫视 ,http://ms.fxim.net:808/hls/18/index.m3u8
+安徽卫视 ,http://ms.fxim.net:808/hls/24/index.m3u8
+江苏卫视 ,http://ms.fxim.net:808/hls/25/index.m3u8
+北京卫视 ,http://ms.fxim.net:808/hls/26/index.m3u8
+深圳卫视 ,http://ms.fxim.net:808/hls/28/index.m3u8
+重庆卫视 ,http://ms.fxim.net:808/hls/29/index.m3u8
+东方卫视 ,http://ms.fxim.net:808/hls/30/index.m3u8
+湖南卫视 ,http://ms.fxim.net:808/hls/31/index.m3u8
+贵州卫视 ,http://ms.fxim.net:808/hls/32/index.m3u8
+四川卫视 ,http://ms.fxim.net:808/hls/33/index.m3u8
+广东卫视 ,http://ms.fxim.net:808/hls/34/index.m3u8
+
 宁波电信,#genre#
 
 CCTV1综合,http://39.106.167.36/migu.php?id=608807420
