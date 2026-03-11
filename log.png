@@ -2741,44 +2741,6 @@ CHC家庭影院,http://tonyk.56301232.xyz:3477/rtp/239.37.0.188:5540
 
 
 
-北京,#genre#
-北京卫视4K,http://38.75.136.137:82/live1/btv1.m3u8?id=bjws4k&usign=lXKCbQJGKBmK2XCPtdGIow
-北京卫视4K,http://38.75.136.137:82/live1/zgst.m3u8?id=bjws4k&usign=lXKCbQJGKBmK2XCPtdGIow
-
-广东,#genre#
-深圳卫视4K,http://38.75.136.137:82/live1/cutv1.m3u8?id=szws4k&usign=lXKCbQJGKBmK2XCPtdGIow
-深圳卫视4K,http://38.75.136.137:82/live1/gdsztv.m3u8?id=szws4k&usign=lXKCbQJGKBmK2XCPtdGIow
-深圳卫视4K,http://38.75.136.137:82/live1/zgst.m3u8?id=szws4k&usign=lXKCbQJGKBmK2XCPtdGIow
-深圳卫视4K,http://livepull-tcms.sztv.com.cn/live/sz4KB.m3u8
-
-湖南,#genre#
-湖南卫视4K,http://38.75.136.137:82/live1/zgst.m3u8?id=hnws4k&usign=lXKCbQJGKBmK2XCPtdGIow
-
-浙江,#genre#
-浙江卫视4K,http://38.75.136.137:82/live1/zjtv1.m3u8?id=zjws4k&usign=lXKCbQJGKBmK2XCPtdGIow
-浙江卫视4K,http://38.75.136.137:82/live1/zjtv.m3u8?id=zjws4k&usign=lXKCbQJGKBmK2XCPtdGIow
-浙江卫视4K,https://play-qukan.cztv.com/live/1758879019692345.m3u8
-浙江卫视4K,http://38.75.136.137:82/live1/zjtv2.m3u8?id=zjws4k&usign=lXKCbQJGKBmK2XCPtdGIow
-浙江卫视4K,http://38.75.136.137:82/live1/zgst.m3u8?id=zjws4k&usign=lXKCbQJGKBmK2XCPtdGIow
-
-江苏,#genre#
-江苏卫视4K,http://38.75.136.137:82/live1/jstv2.m3u8?id=jsws4k&usign=lXKCbQJGKBmK2XCPtdGIow
-江苏卫视4K,http://38.75.136.137:82/live2/jstv.m3u8?id=jsws4k&usign=lXKCbQJGKBmK2XCPtdGIow
-江苏卫视4K,http://38.75.136.137:82/live1/zgst.m3u8?id=jsws4k&usign=lXKCbQJGKBmK2XCPtdGIow
-
-上海,#genre#
-东方卫视4K,http://38.75.136.137:82/live2/shkk.m3u8?id=dfws4k&usign=lXKCbQJGKBmK2XCPtdGIow
-东方卫视4K,http://38.75.136.137:82/live1/zgst.m3u8?id=dfws4k&usign=lXKCbQJGKBmK2XCPtdGIow
-
-山东,#genre#
-山东卫视4K,http://38.75.136.137:82/live1/zgst.m3u8?id=sdws4k&usign=lXKCbQJGKBmK2XCPtdGIow
-
-四川,#genre#
-四川卫视4K,http://38.75.136.137:82/live1/zgst.m3u8?id=scws4k&usign=lXKCbQJGKBmK2XCPtdGIow
-
-上海,#genre#
-欢笑剧场4K,http://111.20.35.108:6610/yinhe/2/ch00000090990000002156/index.m3u8?virtualDomain=yinhe.live_hls.zte.com&IASHttpSessionId=
-欢笑剧场4K,http://dbiptv.sn.chinamobile.com/PLTV/88888888/224/3221226582/1.m3u8
 
 安徽,#genre#
 安徽影视,http://38.75.136.137:82/live2/ahtv2.m3u8?id=ahys&usign=lXKCbQJGKBmK2XCPtdGIow
