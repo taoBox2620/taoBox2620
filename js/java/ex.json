@@ -1,0 +1,34 @@
+{
+    "SiteUrl": "https://www.2xiaopan.top",
+    "Domains": [
+ "https://www.2xiaopan.top",
+                    "https://2xiaopan.top",
+                    "https://www.erxiaozhan.top",
+                    "https://www.2xiaozhan.top",
+                    "https://wexwp.cc"
+    ],
+    "SiteWord": "ex",
+    "SiteName": "二小",
+    "Classes": [
+        {
+            "type_name": "热播资源",
+            "type_id": "22"
+        },
+        {
+            "type_name": "二小电影",
+            "type_id": "1"
+        },
+        {
+            "type_name": "二小剧集",
+            "type_id": "2"
+        },
+        {
+            "type_name": "二小动漫",
+            "type_id": "3"
+        },
+        {
+            "type_name": "二小综艺",
+            "type_id": "17"
+        }
+    ]
+}
