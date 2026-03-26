@@ -1,0 +1,93 @@
+{
+	"classes": [{
+			"type_name": "经典无损音乐合集",
+			"type_id": "经典无损音乐合集"
+		},
+        {
+            "type_name": "00年代经典",
+            "type_id": "00年代经典歌曲"
+        },
+        {
+            "type_name": "90年代经典",
+            "type_id": "90年代经典歌曲"
+        },
+        {
+            "type_name": "80年代经典",
+            "type_id": "80年代经典歌曲"
+        },
+        {
+            "type_name": "70年代经典",
+            "type_id": "70年代经典歌曲"
+        },
+        {
+            "type_name": "60年代经典",
+            "type_id": "60年代经典歌曲"
+        },	
+		{
+			"type_name": "年度热榜",
+			"type_id": "今年热门歌曲"
+		},	
+		{
+			"type_name": "宝华音乐台",
+			"type_id": "宝华音乐台"
+		},	
+		{
+			"type_name": "KTV热门",
+			"type_id": "KTV热门MV"
+		},	
+		{
+			"type_name": "MV",
+			"type_id": "MV"
+		},		
+		{
+			"type_name": "经典老歌",
+			"type_id": "经典老歌"
+		},		
+		{
+			"type_name": "经典粤语",
+			"type_id": "粤语歌曲超清"
+		},	
+		{
+			"type_name": "滚石经典",
+			"type_id": "滚石MV"
+		},
+		{
+			"type_name": "古风歌曲",
+			"type_id": "古风歌曲"
+		},
+		{
+			"type_name": "闽南语歌曲",
+			"type_id": "闽南语歌曲"
+		},
+		{
+			"type_name": "欧美金曲",
+			"type_id": "欧美金曲"
+		},
+		{
+			"type_name": "日韩MV",
+			"type_id": "日韩MV"
+		},				
+		{
+			"type_name": "印度歌舞",
+			"type_id": "印度歌舞"
+		},
+		{
+			"type_name": "黑胶",
+			"type_id": "黑胶"
+		},
+		{
+			"type_name": "翻唱",
+			"type_id": "网红翻唱"
+		},
+		{
+			"type_name": "韩国女团",
+			"type_id": "韩国女团MV"
+		},
+		{
+			"type_name": "DJ",
+			"type_id": "DJ"
+		}
+	],
+	"cookie": "innersign=0;buvid3=2E536ADC-CD6D-46AB-A9FF-904395151EE369713infoc;b_nut=1669016569;i-wanna-go-back=-1;b_ut=7;_uuid=761F7F106-C575-884D-6C10A-92BC10A10D10FBC68934infoc;buvid4=5B25B999-AE15-E09A-A0CC-3661981B71BF70255-122112115-JOyWSaNZfI2kZmT1KYmcQA%3D%3D;fingerprint=6d9ef93c89a567d22b6a9c4104e6cc50;buvid_fp_plain=undefined;buvid_fp=6d9ef93c89a567d22b6a9c4104e6cc50;SESSDATA=2d6f63c8%2C1684568607%2C19eb6%2Ab1;bili_jct=21d538b01566c26afc81ff68c2ac7dca;DedeUserID=3493083203242585;DedeUserID__ckMd5=7b86f3894ed7f8c0;sid=ng0uyvaz;b_lsid=97FB69A2_1869DE8E2C5;bg_view_44176=720227"
+
+}
