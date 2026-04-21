@@ -64,6 +64,7 @@ CETV2,http://120.76.248.139/live/bfgd/4200000492.m3u8
 农林卫视,http://120.76.248.139/live/bfgd/4200000122.m3u8
 
 央视卫视,#genre#
+中国天气,http://124.236.93.22:2380/hw1live.rxip.sc96655.com.huan.tv/live/zgqx_4000.m3u8
 CCTV1,http://124.236.93.22:2380/hw1live.rxip.sc96655.com.huan.tv/live/CCTV-1H265_4000.m3u8
 CCTV2,http://124.236.93.22:2380/hw1live.rxip.sc96655.com.huan.tv/live/CCTV-2H265_4000.m3u8
 CCTV3,http://124.236.93.22:2380/hw1live.rxip.sc96655.com.huan.tv/live/CCTV-3H265_4000.m3u8
@@ -81,11 +82,9 @@ CCTV13,http://124.236.93.22:2380/hw1live.rxip.sc96655.com.huan.tv/live/CCTV-xw_4
 CCTV14,http://124.236.93.22:2380/hw1live.rxip.sc96655.com.huan.tv/live/CCTV-14H265_4000.m3u8
 CCTV15,http://124.236.93.22:2380/hw1live.rxip.sc96655.com.huan.tv/live/CCTV-15-yyH265_4000.m3u8
 CCTV16,http://124.236.93.22:2380/hw1live.rxip.sc96655.com.huan.tv/live/CCTV-16_4000.m3u8
-4K频道,#genre#
 CCTV16,http://124.236.93.22:2380/hw1live.rxip.sc96655.com.huan.tv/live/CCTV-16-4K_8000.m3u8
 CCTV4K,http://124.236.93.22:2380/hw1live.rxip.sc96655.com.huan.tv/live/ys4Kcq_2000.m3u8
 CCTV17,http://124.236.93.22:2380/hw1live.rxip.sc96655.com.huan.tv/live/CCTV-17_4000.m3u8
-中国天气,http://124.236.93.22:2380/hw1live.rxip.sc96655.com.huan.tv/live/zgqx_4000.m3u8
 四川卫视,http://124.236.93.22:2380/hw1live.rxip.sc96655.com.huan.tv/live/scwsH265_4000.m3u8
 康巴卫视,http://124.236.93.22:2380/hw1live.rxip.sc96655.com.huan.tv/live/kbwsH264_2000.m3u8
 湖南卫视,http://124.236.93.22:2380/hw1live.rxip.sc96655.com.huan.tv/live/hnwsH265_4000.m3u8
