@@ -1196,7 +1196,7 @@ CCTV17,http://www.rongrong.me:14022/rtp/233.18.204.83:5140
 
 CCTV17,http://wmh.wmh.ink:6633/rtp/239.77.0.198:5146
 CCTV17,http://x1x.bid:5146/rtp/239.3.1.151:8144
-卫视,#genre#北京卫视,http://home.amucn.net:8800/rtp/239.49.8.11:9414
+北京卫视,http://home.amucn.net:8800/rtp/239.49.8.11:9414
 北京卫视,http://emby.xlangnan.cn:10316/rtp/239.254.200.47:8024
 北京卫视,http://wangfei.uno:9999/rtp/225.1.2.49:10288
 北京卫视,http://hiliu.myds.me:18088/rtp/239.254.96.141:8920
