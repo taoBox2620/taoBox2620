@@ -312,22 +312,6 @@ CETV4,http://47.119.24.76:59093/923287339
 
 北京移动,#genre#
 
-CCTV1,http://115.29.208.41:33339/ln-fx-dx.php?id=0001
-CCTV2,http://115.29.208.41:33339/ln-fx-dx.php?id=0002
-CCTV3,http://115.29.208.41:33339/ln-fx-dx.php?id=0003
-CCTV4,http://115.29.208.41:33339/ln-fx-dx.php?id=0004
-CCTV5,http://115.29.208.41:33339/ln-fx-dx.php?id=0005
-CCTV5+,http://115.29.208.41:33339/ln-fx-dx.php?id=0016
-CCTV6,http://115.29.208.41:33339/ln-fx-dx.php?id=0006
-CCTV7,http://115.29.208.41:33339/ln-fx-dx.php?id=0007
-CCTV8,http://115.29.208.41:33339/ln-fx-dx.php?id=0008
-CCTV9,http://115.29.208.41:33339/ln-fx-dx.php?id=0009
-CCTV10,http://115.29.208.41:33339/ln-fx-dx.php?id=0010
-CCTV11,http://115.29.208.41:33339/ln-fx-dx.php?id=0011
-CCTV12,http://115.29.208.41:33339/ln-fx-dx.php?id=0012
-CCTV13,http://115.29.208.41:33339/ln-fx-dx.php?id=0013
-CCTV14,http://115.29.208.41:33339/ln-fx-dx.php?id=0014
-CCTV15,http://115.29.208.41:33339/ln-fx-dx.php?id=0015
 
 CCTV1,http://115.29.208.41:33339/sx-jz-dx.php?id=0001
 CCTV2,http://115.29.208.41:33339/sx-jz-dx.php?id=0002
@@ -386,6 +370,22 @@ CETV4,http://115.29.208.41:33339/sx-jz-dx.php?id=1002
 新疆卫视,http://115.29.208.41:33339/sx-jz-dx.php?id=0110
 内蒙古卫视,http://115.29.208.41:33339/sx-jz-dx.php?id=0109
 厦门卫视,http://115.29.208.41:33339/sx-jz-dx.php?id=0129
+CCTV1,http://115.29.208.41:33339/ln-fx-dx.php?id=0001
+CCTV2,http://115.29.208.41:33339/ln-fx-dx.php?id=0002
+CCTV3,http://115.29.208.41:33339/ln-fx-dx.php?id=0003
+CCTV4,http://115.29.208.41:33339/ln-fx-dx.php?id=0004
+CCTV5,http://115.29.208.41:33339/ln-fx-dx.php?id=0005
+CCTV5+,http://115.29.208.41:33339/ln-fx-dx.php?id=0016
+CCTV6,http://115.29.208.41:33339/ln-fx-dx.php?id=0006
+CCTV7,http://115.29.208.41:33339/ln-fx-dx.php?id=0007
+CCTV8,http://115.29.208.41:33339/ln-fx-dx.php?id=0008
+CCTV9,http://115.29.208.41:33339/ln-fx-dx.php?id=0009
+CCTV10,http://115.29.208.41:33339/ln-fx-dx.php?id=0010
+CCTV11,http://115.29.208.41:33339/ln-fx-dx.php?id=0011
+CCTV12,http://115.29.208.41:33339/ln-fx-dx.php?id=0012
+CCTV13,http://115.29.208.41:33339/ln-fx-dx.php?id=0013
+CCTV14,http://115.29.208.41:33339/ln-fx-dx.php?id=0014
+CCTV15,http://115.29.208.41:33339/ln-fx-dx.php?id=0015
 
 北京卫视,http://115.29.208.41:33339/ln-fx-dx.php?id=0122
 江苏卫视,http://115.29.208.41:33339/ln-fx-dx.php?id=0127
