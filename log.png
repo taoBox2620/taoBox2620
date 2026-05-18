@@ -4116,21 +4116,6 @@ CHC家庭影院,http://tonyk.56301232.xyz:3477/rtp/239.37.0.188:5540
 黑龙江影视,https://111.43.174.247:4430/live/hljys_hd.m3u8
 黑龙江农业·科教,https://111.43.174.247:4430/live/hljgg_hd.m3u8
 黑龙江少儿,https://111.43.174.247:4430/live/hljse_hd.m3u8
-湖南经视,http://nn.7x9d.cn/地方台8563/湖南2.php?id=280
-湖南电影,http://nn.7x9d.cn/地方台8563/湖南2.php?id=221
-湖南都市,http://nn.7x9d.cn/地方台8563/湖南2.php?id=346
-湖南电视剧,http://nn.7x9d.cn/地方台8563/湖南2.php?id=484
-湖南爱晚,http://nn.7x9d.cn/地方台8563/湖南2.php?id=261
-湖南国际,http://nn.7x9d.cn/地方台8563/湖南2.php?id=229
-湖南娱乐,http://nn.7x9d.cn/地方台8563/湖南2.php?id=344
-茶频道,http://nn.7x9d.cn/地方台8563/湖南2.php?id=578
-金鹰纪实,http://nn.7x9d.cn/地方台8563/湖南2.php?id=316
-金鹰卡通,http://nn.7x9d.cn/地方台8563/湖南2.php?id=287
-快乐垂钓,http://nn.7x9d.cn/地方台8563/湖南2.php?id=218
-先锋乒羽,http://nn.7x9d.cn/地方台8563/湖南2.php?id=329
-长沙新闻,http://nn.7x9d.cn/地方台8563/湖南2.php?id=269
-长沙政法,http://nn.7x9d.cn/地方台8563/湖南2.php?id=254
-长沙女性,http://nn.7x9d.cn/地方台8563/湖南2.php?id=230
 高邑融媒,http://jwcdnqx.hebyun.com.cn/live/gaoyiyitao/1500k/tzwj_video.m3u8
 鹿泉综合,https://jwcdnqx.hebyun.com.cn/live/luquanyi/1500k/tzwj_video.m3u8
 鹿泉二套,https://jwcdnqx.hebyun.com.cn/live/luquaner/1500k/tzwj_video.m3u8
@@ -4216,11 +4201,28 @@ CHC家庭影院,http://tonyk.56301232.xyz:3477/rtp/239.37.0.188:5540
 阜阳生活,http://41007.hlsplay.aodianyun.com/tv_radio_41007/tv_channel_2853.m3u8?auth_key=4835990486-0-0-dcdb6cc0aee871a664044ee7a3e83308&extra_key=jiEx28IYtuWJ1_w9kBTIOKIb4qAj8AdUpC907-3A-1heP_ZkcC9shKy2LFM4R9AiQLgQILrQJL1arILWCMAAizwLLRfZ5JckaokxNmuSv2KZs6SyYxsEki45eCNOFysmPiq_XKQRYYjgnOQiBte9knM20QVSjr7_kfGY0ZMQJoKWXhwFqOC7MaahYRl6X9Bv 
 阜阳教育,http://41007.hlsplay.aodianyun.com/tv_radio_41007/tv_channel_2852.m3u8?auth_key=4835990057-0-0-017419faa93529a4aa5fc283632732ca&extra_key=vQshsQkSOG1FT9Mb763SReA_ScJbWZE1GdTHuMtghVIye3UhXJWOF-WqFU3cuQ-uD1nO3QrpvlmEGnULzFj7L_nbUOgIFmahrvO-Mu8U3Rx4MRBSMj7QUjXKdwK-4_tfiHF9qHU4TLF_9Q9bpL7Sk2xp6AMy4uMlD3O5Hmrnu1w2QzhRwTPxeTmKO9iTZamR 
 
-北京影视,http://129.211.14.102:25000/btime.php?id=btvys&token=www.9kds.com
-北京新闻,http://129.211.14.102:25000/btime.php?id=btvxw&token=www.9kds.com
-北京生活,http://129.211.14.102:25000/btime.php?id=btvsh&token=www.9kds.com
-北京体育休闲,http://129.211.14.102:25000/btime.php?id=bjjs&token=www.9kds.com
-
+北京卫视,http://123.121.5.183:4000/rtp/239.3.1.241:8000
+北京新闻,http://123.121.5.183:4000/rtp/239.3.1.159:8000
+北京影视,http://123.121.5.183:4000/rtp/239.3.1.158:8000
+北京文艺,http://123.121.5.183:4000/rtp/239.3.1.242:8000
+北京财经,http://123.121.5.183:4000/rtp/239.3.1.116:8000
+北京生活,http://123.121.5.183:4000/rtp/239.3.1.117:8000
+北京青年,http://123.121.5.183:4000/rtp/239.3.1.118:8000
+北京纪实科教,http://123.121.5.183:4000/rtp/239.3.1.115:8000
+北京卡酷少儿,http://123.121.5.183:4000/rtp/239.3.1.189:8000
+北京体育休闲,http://123.121.5.183:4000/rtp/239.3.1.243:8000
+北京国际频道,http://123.121.5.183:4000/rtp/239.3.1.235:8000
+朝阳融媒,http://123.121.5.183:4000/rtp/239.3.1.163:8001
+通州融媒,http://123.121.5.183:4000/rtp/239.3.1.221:8001
+密云电视台,http://123.121.5.183:4000/rtp/239.3.1.154:8001
+延庆电视台,http://123.121.5.183:4000/rtp/239.3.1.187:8001
+房山电视台,http://123.121.5.183:4000/rtp/239.3.1.96:8001
+IPTV 淘剧场,http://123.121.5.183:4000/rtp/239.3.1.95:8001
+IPTV 淘娱乐,http://123.121.5.183:4000/rtp/239.3.1.100:8001
+IPTV 淘Baby,http://123.121.5.183:4000/rtp/239.3.1.238:8001
+IPTV 萌宠TV,http://123.121.5.183:4000/rtp/239.3.1.102:8001
+IPTV 4K超清,http://123.121.5.183:4000/rtp/239.3.1.249:8001
+IPTV 淘电影,http://123.121.5.183:4000/rtp/239.3.1.250:8001
 看东方,http://bp-resource-dfl.bestv.cn/148/3/video.m3u8
 新纪实,http://bp-resource-dfl.bestv.cn/155/3/video.m3u8
 金山电视,https://pili-live-hls.wdit.com.cn/wditlive/8818dfe5f4df45ba9a3f32964d172fb2b6d3.m3u8
