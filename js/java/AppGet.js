@@ -1,824 +1,1060 @@
-import { Crypto, _ } from 'assets://js/lib/cat.js';
- 
-let siteUrl = '';
-let key = '';
-let iv = '';
-let siteKey = '';
-let siteType = 3;
-let apiPrefix = 'getappapi.index';
- 
-const prefixMap = {
-    '1': 'getappapi.index',
-    '2': 'qijiappapi.index',
-    '3': 'appapi'
-};
- 
-let enableVerifyTimeSign = false;
-let headers = {
-    'User-Agent': 'okhttp/3.10.0',
-    'app-user-device-id': '291b226282010337c9443590d6457be15',
-    'app-version-code': '112'
-};
- 
-let parseMap = {};
-let homeVods = [];
-let Searchstatus = false;
-let searchApiSuffix = '';
-let souParamName = '';
-let souSalt = '';
-let extraSearchHeaders = {};
-let initSuffix = 'init';
-let hasCustomInit = false;
-let thirdDanmuBaseUrl = '';
-let customPlayUa = ''; // 新增：自定义播放链接UA
+import { Crypto, _ } from 'assets://js/lib/cat.js'
 
-let request = async (reqUrl, data, header, method) => {
-    let finalHeaders = { ...headers };
-    if (enableVerifyTimeSign) {
-        const timestamp = Math.floor(Date.now() / 1000).toString();
-        const sign = aesEncode(timestamp, key, iv);
-        finalHeaders['app-api-verify-time'] = timestamp;
-        finalHeaders['app-api-verify-sign'] = sign;
-    }
-    if (header) {
-        finalHeaders = { ...finalHeaders, ...header };
-    }
-    let res = await req(reqUrl, {
-        method: method || 'get',
-        data: data || '',
-        headers: finalHeaders,
-        postType: method === 'post' ? 'form' : '',
-        timeout: 10000,
-    });
-    return res.content;
+let host = '';
+let header = {
+    'User-Agent': 'okhttp/3.12.11'
 };
- 
-let request_text = async (reqUrl, data, header, method, tobase64) => {
-    let finalHeaders = { ...headers };
-    if (enableVerifyTimeSign) {
-        const timestamp = Math.floor(Date.now() / 1000).toString();
-        const sign = aesEncode(timestamp, key, iv);
-        finalHeaders['app-api-verify-time'] = timestamp;
-        finalHeaders['app-api-verify-sign'] = sign;
-    }
-    if (header) {
-        finalHeaders = { ...finalHeaders, ...header };
-    }
-    let optObj = {
-        headers: finalHeaders,
-        method: method || 'get',
-        data: method === 'post' ? data : undefined,
-        postType: method === 'post' ? (data ? 'raw' : 'form') : undefined,
-        timeout: 10000,
-    };
-    if (tobase64) {
-        optObj.buffer = 2;
-    }
-    let res = await req(reqUrl, optObj);
-    return res.content;
-};
- 
+let siteKey = '';
+let siteType = '';
+let siteJx = '';
+
+const urlPattern1 = /api\.php\/.*?\/vod/;
+const urlPattern2 = /api\.php\/.+?\.vod/;
+const parsePattern = /\/.+\\?.+=/;
+const parsePattern1 = /.*(url|v|vid|php\?id)=/;
+const parsePattern2 = /https?:\/\/[^\/]*/;
+
+const htmlVideoKeyMatch = [
+    /player=new/,
+    /<div id="video"/,
+    /<div id="[^"]*?player"/,
+    /\/\/视频链接/,
+    /HlsJsPlayer\(/,
+    /<iframe[\s\S]*?src="[^"]+?"/,
+    /<video[\s\S]*?src="[^"]+?"/,
+];
+
+const parseUrlMap = new Map();
+
 async function init(cfg) {
     siteKey = cfg.skey;
     siteType = cfg.stype;
-    if (!cfg.ext) return;
-    let extObj;
-    if (typeof cfg.ext === 'string') {
-        extObj = JSON.parse(cfg.ext);
-    } else if (typeof cfg.ext === 'object' && cfg.ext !== null) {
-        extObj = cfg.ext;
-    } else {
-        return;
+    host = cfg.ext;
+    if (cfg.ext.hasOwnProperty('host')) {
+        host = cfg.ext.host;
+        siteJx = cfg.ext;
     }
-    if (extObj.init && typeof extObj.init === 'string' && extObj.init.startsWith('V')) {
-        initSuffix = 'init' + extObj.init;
-        hasCustomInit = true;
-    }
-    if (extObj.time !== undefined) {
-        const timeVal = String(extObj.time);
-        enableVerifyTimeSign = (timeVal === '1' || timeVal === 'true' || timeVal === '1');
-    }
-    if (extObj.code !== undefined) {
-        forceVerifyCode = String(extObj.code).trim();
-    }
-    // 新增：读取自定义播放UA
-    if (extObj.ua2 !== undefined) {
-        customPlayUa = String(extObj.ua2).trim();
-    }
-    if (extObj.head && typeof extObj.head === 'string') {
-        const headStr = extObj.head.trim();
-        if (headStr) {
-            const items = headStr.split(',');
-            for (let item of items) {
-                const trimmed = item.trim();
-                if (!trimmed) continue;
-                const colonIndex = trimmed.indexOf(':');
-                if (colonIndex > 0) {
-                    const hKey = trimmed.substring(0, colonIndex).trim();
-                    const hValue = trimmed.substring(colonIndex + 1).trim();
-                    if (hKey && hValue) {
-                        headers[hKey] = hValue;
-                    }
-                }
-            }
-        }
-    }
-    let host = extObj.host || '';
-    if (host) {
-        if (host.startsWith('http') && (host.endsWith('.txt') || host.endsWith('.json'))) {
-            let response = await request(host, null, headers, 'get');
-            let urls = response.split('\n').map(line => line.trim()).filter(line => line && line.startsWith('http'));
-            if (urls.length > 0) {
-                host = urls[0];
-            }
-        }
-        siteUrl = host.replace(/\/+$/, '');
-        if (!siteUrl.includes('php')) {
-            siteUrl += '/api.php';
-        }
-    }
-    key = extObj.key || '';
-    iv = extObj.iv || key;
-    if (extObj.api && prefixMap[extObj.api]) {
-        apiPrefix = prefixMap[extObj.api];
-    }
-    if (extObj.version) {
-        headers['app-version-code'] = String(extObj.version);
-    }
-    if (extObj.id) {
-        headers['app-user-device-id'] = extObj.id;
-    }
-    if (extObj.token) {
-        headers['app-user-token'] = extObj.token;
-    }
-    if (extObj.ua) {
-        headers['User-Agent'] = extObj.ua;
-    }
+};
+
+async function request(reqUrl, ua, timeout = 60000) {
+    let res = await req(reqUrl, {
+        method: 'get',
+        headers: ua ? ua : {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36'},
+        timeout: timeout,
+    });
+    return res.content;
 }
- 
-function processSignatureValue(sig) {
-    if (sig.length < 8) {
-        return sig.split('').reverse().join('');
-    } else {
-        let rear = sig.slice(-8).split('').reverse().join('');
-        let front = sig.slice(0, -8).split('').reverse().join('');
-        return front + rear;
-    }
-}
- 
+
 async function home(filter) {
-    let initUrl = `${siteUrl}/${apiPrefix}/${initSuffix}`;
-    let rets = JSON.parse(await request(initUrl)).data;
-    let data = JSON.parse(aesDecode(rets, key, iv));
- 
-    let rawDanmuUrl = data.config?.third_danmu_url || '';
- 
-    if (Array.isArray(rawDanmuUrl)) {
-        rawDanmuUrl = rawDanmuUrl.find(u => u && typeof u === 'string' && u.trim()) || '';
-    } else if (typeof rawDanmuUrl !== 'string') {
-        rawDanmuUrl = '';
-    }
- 
-    if (rawDanmuUrl) {
-        thirdDanmuBaseUrl = rawDanmuUrl.trim();
-        let lower = thirdDanmuBaseUrl.toLowerCase();
-        if (!lower.match(/[?&]url=$/)) {
-            thirdDanmuBaseUrl += thirdDanmuBaseUrl.includes('?') ? '&url=' : '?url=';
-        }
-    } else {
-        thirdDanmuBaseUrl = 'https://dmku.hls.one/?ac=dm&url='; 
-    }
- 
-    if (data.box_config) {
-        let originalKey = key;
-        let swappedKey = originalKey.split('').reverse().join('');
-        let md5Key = md5(swappedKey);
-        let dynamicIv = md5Key.substring(0, 16);
-        let decrypted = aesDecode(data.box_config, swappedKey, dynamicIv);
-        let boxJson = JSON.parse(decrypted);
-        if (boxJson.search_name) {
-            searchApiSuffix = boxJson.search_name;
-        }
-        if (boxJson.signature_name && boxJson.signature_value) {
-            souParamName = boxJson.signature_name;
-            souSalt = processSignatureValue(boxJson.signature_value);
-        }
-        if (boxJson.api_header && boxJson.api_header.key && boxJson.api_header.value) {
-            extraSearchHeaders[boxJson.api_header.key] = boxJson.api_header.value;
-        }
-    } else {
-        searchApiSuffix = 'searchList';
-        souParamName = '';
-        souSalt = '';
-    }
- 
-    Searchstatus = data.config?.system_search_verify_status || false;
- 
-    let filters = {};
-    let classes = [];
-    homeVods = [];
- 
-    _.forEach(data.type_list, item => {
-        if (item.type_id > 0) {
-            if (item.recommend_list && Array.isArray(item.recommend_list)) {
-                homeVods = homeVods.concat(item.recommend_list);
-            }
-        }
- 
-        classes.push({
-            type_id: item.type_id,
-            type_name: item.type_name,
-        });
- 
-        let filterList = [];
-        _.forEach(item.filter_type_list, f => {
-            let filter = {};
-            if (f.name === 'class') {
-                filter['name'] = '分类';
-                filter['key'] = f.name;
-                filter['value'] = _.map(f.list, i => ({ v: i, n: i }));
-            }
-            if (f.name === 'area') {
-                filter['name'] = '区域';
-                filter['key'] = f.name;
-                filter['value'] = _.map(f.list, i => ({ v: i, n: i }));
-            }
-            if (f.name === 'lang') {
-                filter['name'] = '语言';
-                filter['key'] = f.name;
-                filter['value'] = _.map(f.list, i => ({ v: i, n: i }));
-            }
-            if (f.name === 'year') {
-                filter['name'] = '年份';
-                filter['key'] = f.name;
-                filter['value'] = _.map(f.list, i => ({ v: i, n: i }));
-            }
-            if (f.name === 'sort') {
-                filter['name'] = '排序';
-                filter['key'] = f.name;
-                filter['value'] = _.map(f.list, i => ({ v: i, n: i }));
-            }
-            if (Object.keys(filter).length > 0) {
-                filterList.push(filter);
-            }
-        });
-        if (filterList.length > 0) {
-            filters[item.type_id] = filterList;
-        }
-    });
- 
-    return JSON.stringify({
-        'class': classes,
-        'filters': filters,
-    });
-}
- 
-async function homeVod() {
-    return JSON.stringify({
-        list: homeVods,
-    });
-}
- 
-async function category(tid, pg, filter, extend) {
-    if (pg <= 0) pg = 1;
-    let url = `${siteUrl}/${apiPrefix}/typeFilterVodList`;
-    let params = {
-        "area": extend['area'] || "全部",
-        "sort": extend['sort'] || "最新",
-        "class": extend['class'] || "全部",
-        "type_id": tid,
-        "year": extend['year'] || "全部",
-        "lang": extend['lang'] || '全部',
-        "page": pg,
-    };
-    let encData = JSON.parse(await request(url, params, '', 'post')).data;
-    let videos = JSON.parse(aesDecode(encData, key, iv)).recommend_list;
-    return JSON.stringify({
-        page: pg,
-        pagecount: 9999,
-        list: videos,
-    });
-}
- 
-async function detail(id) {
-    let url = `${siteUrl}/${apiPrefix}/vodDetail`;
-    let resp = await request(url, { vod_id: id }, '', 'post');
-    let jsonResp = JSON.parse(resp);
-    let encData = jsonResp.data;
-    let decoded = aesDecode(encData, key, iv);
-    let info = JSON.parse(decoded);
-    let videos = {
-        vod_id: info.vod.vod_id,
-        vod_name: info.vod.vod_name,
-        vod_area: info.vod.vod_area,
-        vod_director: info.vod.vod_director,
-        vod_actor: info.vod.vod_actor,
-        vod_pic: info.vod.vod_pic,
-        vod_content: info.vod.vod_content,
-        type_name: info.vod.vod_class,
-        vod_year: info.vod.vod_year 
-    };
-    let froms = [];
-    let urls = [];
-    let playSources = _.map(info.vod_play_list, item => {
-        const playerInfo = item.player_info || {};
-        const parse = playerInfo.parse || '';
-        const ua = playerInfo.user_agent || customPlayUa || ''; // 修改：优先使用自定义UA，如果没有则使用原有的
-        const nameUrls = _.map(item.urls || [], item2 => {
-            const { name = '', url = '', token = '', parse_api_url = '', nid = 1 } = item2;
-            return `${name}$${url}@@${parse}@@${token}@@${parse_api_url}@@${ua}@@${info.vod.vod_id}@@${nid}`;
-        }).join('#');
-        return {
-            show: playerInfo.show || 'Unknown',
-            urls: nameUrls 
-        };
-    });
-    let showCount = {};
-    playSources = _.map(playSources, source => {
-        let showName = source.show;
-        if (showCount[showName]) {
-            showCount[showName]++;
-            showName = `${showName}${showCount[showName]}`;
-        } else {
-            showCount[showName] = 1;
-        }
-        return {
-            show: showName,
-            urls: source.urls 
-        };
-    });
-    playSources.sort((a, b) => {
-        const aShow = a.show.toLowerCase();
-        const bShow = b.show.toLowerCase();
-        const getPriority = (show) => {
-            if (show.includes('4k')) return 1;
-            if (show.includes('K')) return 2;
-            if (show.includes('独家')) return 3;
-            if (show.includes('秒播')) return 4;
-            if (show.includes('自建')) return 5;
-            if (show.includes('蓝光')) return 6;
-            if (show.includes('专线')) return 7;
-            return 8;
-        };
-        return getPriority(aShow) - getPriority(bShow);
-    });
-    froms = _.map(playSources, source => source.show);
-    urls = _.map(playSources, source => source.urls);
-    videos.vod_play_from = froms.join('$$$');
-    videos.vod_play_url = urls.join('$$$');
-    return JSON.stringify({
-        list: [videos],
-    });
-}
- 
-async function play(flag, id, flags) {
-    let parts = id.split('@@');
-    let playUrl = parts[0];
-    let parse = parts[1] || '';
-    let token = parts[2] || '';
-    let parse_api_url = parts[3] || '';
-    let ua = parts[4] || ''; // 新增：获取UA
-    let vodId = parts[5] || '';
-    let nidStr = parts[6] || '1';
-    
-    let danmakuUrl = '';
-    if (thirdDanmuBaseUrl && vodId) {
-        let nid = parseInt(nidStr, 10);
-        if (isNaN(nid) || nid < 1) nid = 1;
-        let urlPosition = nid - 1;
-        let danmuParams = {
-            url_position: urlPosition.toString(),
-            vod_id: vodId 
-        };
-        let danmuRet = await request(`${siteUrl}/${apiPrefix}/danmuList`, danmuParams, '', 'post');
-        let danmuResponse = JSON.parse(danmuRet);
-        if (danmuResponse.data) {
-            let decryptedDanmu = JSON.parse(aesDecode(danmuResponse.data, key, iv));
-            if (decryptedDanmu && decryptedDanmu.official_url) {
-                let realDanmuUrl = thirdDanmuBaseUrl + decryptedDanmu.official_url;
-                let EncodedUrl = encodeURIComponent(realDanmuUrl);
-                let headerJson = JSON.stringify(headers);
-                danmakuUrl = js2Proxy(
-                    false,
-                    siteType,
-                    siteKey || '',
-                    EncodedUrl,
-                    headers
-                );
-            }
-        }
-    }
- 
-    // 修改：如果存在自定义UA，添加到返回参数中
-    if (
-        (playUrl.includes('http://') || playUrl.includes('https://')) &&
-        (playUrl.includes('m3u8') || playUrl.includes('mp4') || playUrl.includes('mkv')) &&
-    !parse_api_url
-    ) {
-        let result = {
-            parse: 0,
-            url: playUrl,
-            danmaku: danmakuUrl
-        };
-        // 如果存在自定义UA，添加到返回结果中
-        if (ua) {
-            result.header = { 'User-Agent': ua };
-        }
-        return JSON.stringify(result);
-    }
-    if (parse.startsWith("http")) {
-        let parseUrl = parse + playUrl;
-        if (token) {
-            parseUrl += '&token=' + token;
-        }
-        // 如果存在自定义UA，在请求解析接口时使用
-        let requestHeaders = {};
-        if (ua) {
-            requestHeaders['User-Agent'] = ua;
-        }
-        let rets = await request(parseUrl, null, requestHeaders, 'get');
-        if (rets.indexOf('DOCTYPE html') > -1) {
-            let result = {
-                parse: 1,
-                url: parseUrl,
-                danmaku: danmakuUrl
-            };
-            if (ua) {
-                result.header = { 'User-Agent': ua };
+    try {
+        // 苹果CMS V10模式检测
+        if (host.includes('/vod') || host.includes('/provide/vod')) {
+            const url = host;
+            const json = await request(url, getHeaders(url));
+            const obj = JSON.parse(json);
+            const result = { class: [] };
+            
+            if (obj.class && Array.isArray(obj.class)) {
+                for (const item of obj.class) {
+                    const typeName = item.type_name;
+                    if (isBan(typeName)) continue;
+                    result.class.push({
+                        type_id: item.type_id,
+                        type_name: typeName
+                    });
+                }
             }
             return JSON.stringify(result);
-        }
-        let parseJson = JSON.parse(rets);
-        let result = {
-            parse: 0,
-            url: parseJson['url'] || parseJson['data']['url'] || '',
-            danmaku: danmakuUrl
-        };
-        // 如果存在自定义UA，添加到返回结果中
-        if (ua) {
-            result.header = { 'User-Agent': ua };
-        }
-        return JSON.stringify(result);
-    }
-    let params = {
-        'parse_api': parse,
-        'url': aesEncode(playUrl, key, iv),
-        'token': token,
-    };
-    // 如果存在自定义UA，在请求时使用
-    let requestHeaders = {};
-    if (ua) {
-        requestHeaders['User-Agent'] = ua;
-    }
-    let rets = await request(`${siteUrl}/${apiPrefix}/vodParse`, params, requestHeaders, 'post');
-    let urlDecoded = aesDecode(JSON.parse(rets).data, key, iv);
-    let finalPlayUrl = '';
-    let parsed = JSON.parse(urlDecoded);
-    finalPlayUrl = JSON.parse(parsed.json).url || '';
-    let result = {
-        parse: 0,
-        url: finalPlayUrl,
-        danmaku: danmakuUrl 
-    };
-    // 如果存在自定义UA，添加到返回结果中
-    if (ua) {
-        result.header = { 'User-Agent': ua };
-    }
-    return JSON.stringify(result);
-}
- 
-async function search(wd, quick, pg) {
-    if (hasCustomInit) {
-        await home({});
-    }
-    let searchPath = searchApiSuffix || 'searchList';
-    let url = `${siteUrl}/${apiPrefix}/${searchPath}`;
-    let retryCount = 0;
-    const maxRetries = 1;
-    let videos = [];
-    let attemptedCaptcha = false;
-    let attemptedSlider = false;
-    let sliderVerified = false;
-    let sliderId = '';
-    
-    let params = {
-        'page': '1',
-        'type_id': '0',
-        'keywords': wd,
-    };
-    
-    if (souParamName && souSalt) {
-        const currentTimestamp = Math.floor(Date.now() / 1000).toString();
-        const souString = `/${souParamName}-${currentTimestamp}-sb-0-${souSalt}`;
-        const md5Value = md5(souString);
-        const finalValue = `${currentTimestamp}-sb-0-${md5Value}`;
-        params[souParamName] = finalValue;
-    }
-    
-    let searchHeaders = { ...headers, ...extraSearchHeaders };
-    
-    if (forceVerifyCode) {
-        params['code'] = forceVerifyCode;
-        const random_uuid = generateUUID();
-        params['key'] = random_uuid;
-    }
-    
-    const maxWaitRetries = 2;
-    let waitRetryCount = 0;
-    
-    while (true) {
-        let encData = await request(url, params, searchHeaders, 'post');
-        let response = JSON.parse(encData);
-        
-        if (response.code === 1001 && response.need_slider === true && !attemptedSlider) {
-            attemptedSlider = true;
-            
-            let getSliderUrl = `${siteUrl}/${apiPrefix}/getSlider`;
-            let sliderResponse = await request(getSliderUrl, {}, searchHeaders, 'post');
-            let sliderJson = JSON.parse(sliderResponse);
-            
-            if (sliderJson.code === 1 && sliderJson.data) {
-                let sliderDecrypted = aesDecode(sliderJson.data, key, iv);
-                let sliderData = JSON.parse(sliderDecrypted);
+        } else {
+            // 原有AppYsV2模式
+            let url = getCateUrl(host);
+            let jsonArray = null;
+
+            if (url) {
+                const json = await request(url, getHeaders(url));
+                const obj = JSON.parse(json);
                 
-                sliderId = sliderData.slider_id || '';
-                let targetX = parseInt(sliderData.target_x) || 0;
-                let targetY = parseInt(sliderData.target_y) || 0;
-                
-                if (sliderId && targetX > 0) {
-                    let posX = targetX;
-                    if (targetX > 0) {
-                        let randomOffset = Math.floor(Math.random() * 3) - 1;
-                        posX = targetX + randomOffset;
-                        if (posX < 1) posX = 1;
-                        if (posX > (sliderData.bg_width || 280)) posX = sliderData.bg_width || 280;
-                    }
-                    
-                    let timestamp = Date.now();
-                    await new Promise(resolve => setTimeout(resolve, 1000));
-                    
-                    let verifyParams = {
-                        pos_x: posX.toString(),
-                        slider_id: sliderId,
-                        timestamp: timestamp.toString()
+                if (obj.hasOwnProperty("class") && Array.isArray(obj.class)) {
+                    jsonArray = obj.class;
+                } else if (obj.hasOwnProperty("list") && Array.isArray(obj.list)) {
+                    jsonArray = obj.list;
+                } else if (obj.hasOwnProperty("data") && obj.data.hasOwnProperty("list") && Array.isArray(obj.data.list)) {
+                    jsonArray = obj.data.list;
+                } else if (obj.hasOwnProperty("data") && Array.isArray(obj.data)) {
+                    jsonArray = obj.data;
+                }
+            } else {
+                const filterStr = getFilterTypes(url, null);
+                const classes = filterStr.split("\n")[0].split("+");
+                jsonArray = [];
+                for (let i = 1; i < classes.length; i++) {
+                    const kv = classes[i].trim().split("=");
+                    if (kv.length < 2) continue;
+                    const newCls = {
+                        type_name: kv[0].trim(),
+                        type_id: kv[1].trim(),
                     };
-                    
-                    let verifySliderUrl = `${siteUrl}/${apiPrefix}/verifySlider`;
-                    let verifyResponse = await request(verifySliderUrl, verifyParams, searchHeaders, 'post');
-                    let verifyJson = JSON.parse(verifyResponse);
-                    
-                    if (verifyJson.code === 1 && verifyJson.data) {
-                        let verifyDecrypted = aesDecode(verifyJson.data, key, iv);
-                        let verifyResult = JSON.parse(verifyDecrypted);
-                        
-                        if (verifyResult.verified === true) {
-                            sliderVerified = true;
-                            continue;
+                    jsonArray.push(newCls);
+                }
+            }
+
+            const result = { class: [] };
+            if (jsonArray != null) {
+                for (let i = 0; i < jsonArray.length; i++) {
+                    const jObj = jsonArray[i];
+                    const typeName = jObj.type_name;
+                    if (isBan(typeName)) continue;
+                    const typeId = jObj.type_id;
+                    const newCls = {
+                        type_id: typeId,
+                        type_name: typeName,
+                    };
+                    const typeExtend = jObj.type_extend;
+                    if (filter) {
+                        const filterStr = getFilterTypes(url, typeExtend);
+
+                        const filters = filterStr.split("\n");
+                        const filterArr = [];
+                        for (let k = (url) ? 1 : 0; k < filters.length; k++) {
+                            const l = filters[k].trim();
+                            if (!l) continue;
+                            const oneLine = l.split("+");
+
+                            let type = oneLine[0].trim();
+                            let typeN = type;
+                            if (type.includes("筛选")) {
+                                type = type.replace(/筛选/g, "");
+                                if (type === "class") typeN = "类型";
+                                else if (type === "area") typeN = "地区";
+                                else if (type === "lang") typeN = "语言";
+                                else if (type === "year") typeN = "年份";
+                            }
+                            const jOne = {
+                                key: type,
+                                name: typeN,
+                                value: [],
+                            };
+                            for (let j = 1; j < oneLine.length; j++) {
+                                const kv = oneLine[j].trim();
+                                const sp = kv.indexOf("=");
+
+                                if (sp === -1) {
+                                    if (isBan(kv)) continue;
+                                    jOne.value.push({ n: kv, v: kv });
+                                } else {
+                                    const n = kv.substring(0, sp);
+                                    if (isBan(n)) continue;
+                                    jOne.value.push({
+                                        n: n.trim(),
+                                        v: kv.substring(sp + 1).trim(),
+                                    });
+                                }
+                            }
+                            filterArr.push(jOne);
                         }
+                        if (!result.hasOwnProperty("filters")) {
+                            result.filters = {};
+                        }
+                        result.filters[typeId] = filterArr;
+                    }
+                    result.class.push(newCls);
+                }
+            }
+
+            return JSON.stringify(result);
+        }
+    } catch (e) {
+        SpiderDebug.log("分类接口错误：" + e);
+    }
+    return JSON.stringify({ class: [] });
+}
+
+async function homeVod() {
+    try {
+        // 苹果CMS V10模式检测
+        if (host.includes('/vod') || host.includes('/provide/vod')) {
+            const url = `${host}?ac=videolist&t=1&pg=1`;
+            const json = await request(url, getHeaders(url));
+            const obj = JSON.parse(json);
+            const videos = [];
+            
+            if (obj.list && Array.isArray(obj.list)) {
+                for (const item of obj.list) {
+                    videos.push({
+                        vod_id: item.vod_id,
+                        vod_name: (item.vod_name || "").replace(/奇迹云/g, ''),
+                        vod_pic: item.vod_pic || "",
+                        vod_remarks: (item.vod_remarks || "").replace(/奇迹云/g, '')
+                    });
+                }
+            }
+            return JSON.stringify({ list: videos });
+        } else {
+            // 原有AppYsV2模式
+            const apiUrl = host;
+            let url = getRecommendUrl(apiUrl);
+            let isTV = false;
+
+            if (!url) {
+                url = getCateFilterUrlPrefix(apiUrl) + "movie&page=1&area=&type=&start=";
+                isTV = true;
+            }
+            const json = await request(url, getHeaders(url));
+            const obj = JSON.parse(json);
+            const videos = [];
+            if (isTV) {
+                const jsonArray = obj.data;
+                for (let i = 0; i < jsonArray.length; i++) {
+                    const vObj = jsonArray[i];
+                    const v = {
+                        vod_id: vObj.nextlink,
+                        vod_name: (vObj.title || "").replace(/奇迹云/g, ''),
+                        vod_pic: vObj.pic,
+                        vod_remarks: (vObj.state || "").replace(/奇迹云/g, ''),
+                    };
+                    videos.push(v);
+                }
+            } else {
+                const arrays = [];
+                findJsonArray(obj, "vlist", arrays);
+                if (arrays.length === 0) {
+                    findJsonArray(obj, "vod_list", arrays);
+                }
+                const ids = [];
+                for (const jsonArray of arrays) {
+                    for (let i = 0; i < jsonArray.length; i++) {
+                        const vObj = jsonArray[i];
+                        const vid = vObj.vod_id;
+                        if (ids.includes(vid)) continue;
+                        ids.push(vid);
+                        const v = {
+                            vod_id: vid,
+                            vod_name: (vObj.vod_name || "").replace(/奇迹云/g, ''),
+                            vod_pic: vObj.vod_pic,
+                            vod_remarks: (vObj.vod_remarks || "").replace(/奇迹云/g, ''),
+                        };
+                        videos.push(v);
                     }
                 }
             }
+
+            const result = {
+                list: videos,
+            };
+            return JSON.stringify(result);
+        }
+    } catch (e) {
+        SpiderDebug.log(e);
+    }
+    return "";
+}
+
+async function category(tid, pg, filter, extend) {
+    try {
+        // 苹果CMS V10模式检测
+        if (host.includes('/vod') || host.includes('/provide/vod')) {
+            const url = `${host}?ac=videolist&t=${tid}&pg=${pg}`;
+            const json = await request(url, getHeaders(url));
+            const obj = JSON.parse(json);
+            const videos = [];
             
-            if (!sliderVerified) {
-                if (!forceVerifyCode && (Searchstatus || (response.code === 0 && response.msg && response.msg.includes('验证码')))) {
-                    if (attemptedCaptcha) break;
-                    attemptedCaptcha = true;
-                    const random_uuid = generateUUID();
-                    let modifiedApiPrefix = apiPrefix.replace('.index', '');
-                    let verifyUrl = `${siteUrl}/${modifiedApiPrefix}.verify/create?key=${random_uuid}`;
-                    let base64Img = await request_text(verifyUrl, null, headers, 'get', true);
-                    base64Img = base64Img.replace(/\n/g, '');
-                    let ocrResult = await request_text('https://api.nn.ci/ocr/b64/text',   base64Img, { 'User-Agent': 'okhttp/3.10.0' }, 'post');
-                    params['code'] = ocrResult.trim();
-                    params['key'] = random_uuid;
-                    retryCount++;
-                    continue;
+            if (obj.list && Array.isArray(obj.list)) {
+                for (const item of obj.list) {
+                    videos.push({
+                        vod_id: item.vod_id,
+                        vod_name: (item.vod_name || "").replace(/奇迹云/g, ''),
+                        vod_pic: item.vod_pic || "",
+                        vod_remarks: (item.vod_remarks || "").replace(/奇迹云/g, '')
+                    });
+                }
+            }
+            
+            return JSON.stringify({
+                page: pg,
+                pagecount: obj.pagecount || 1,
+                limit: obj.limit || 20,
+                total: obj.total || 0,
+                list: videos
+            });
+        } else {
+            // 原有AppYsV2模式
+            const apiUrl = host;
+            let url = getCateFilterUrlPrefix(apiUrl) + tid + getCateFilterUrlSuffix(apiUrl);
+            url = url.replace(/#PN#/g, pg);
+            url = url.replace(/筛选class/g, extend?.class ?? "");
+            url = url.replace(/筛选area/g, extend?.area ?? "");
+            url = url.replace(/筛选lang/g, extend?.lang ?? "");
+            url = url.replace(/筛选year/g, extend?.year ?? "");
+            url = url.replace(/排序/g, extend?.排序 ?? "");
+
+            const json = await request(url, getHeaders(url));
+            const obj = JSON.parse(json);
+
+            let totalPg = Infinity;
+            try {
+                if (obj.totalpage !== undefined && typeof obj.totalpage === "number") {
+                    totalPg = obj.totalpage;
+                } else if (
+                    obj.pagecount !== undefined &&
+                    typeof obj.pagecount === "number"
+                ) {
+                    totalPg = obj.pagecount;
+                } else if (
+                    obj.data !== undefined &&
+                    typeof obj.data === "object" &&
+                    obj.data.total !== undefined &&
+                    typeof obj.data.total === "number" &&
+                    obj.data.limit !== undefined &&
+                    typeof obj.data.limit === "number"
+                ) {
+                    const limit = obj.data.limit;
+                    const total = obj.data.total;
+                    totalPg = total % limit === 0 ? total / limit : Math.floor(total / limit) + 1;
+                }
+            } catch (e) {
+                SpiderDebug.log(e);
+            }
+
+            const jsonArray =
+                obj.list !== undefined
+                    ? obj.list
+                    : obj.data !== undefined && obj.data.list !== undefined
+                        ? obj.data.list
+                        : obj.data;
+            const videos = [];
+
+            if (jsonArray !== undefined) {
+                for (let i = 0; i < jsonArray.length; i++) {
+                    const vObj = jsonArray[i];
+                    const v = {
+                        vod_id: vObj.vod_id !== undefined ? vObj.vod_id : vObj.nextlink,
+                        vod_name: ((vObj.vod_name !== undefined ? vObj.vod_name : vObj.title) || "").replace(/奇迹云/g, ''),
+                        vod_pic: vObj.vod_pic !== undefined ? vObj.vod_pic : vObj.pic,
+                        vod_remarks: ((vObj.vod_remarks !== undefined ? vObj.vod_remarks : vObj.state) || "").replace(/奇迹云/g, ''),
+                    };
+                    videos.push(v);
+                }
+            }
+
+            const result = {
+                page: pg,
+                pagecount: totalPg,
+                limit: 90,
+                total: Infinity,
+                list: videos,
+            };
+
+            return JSON.stringify(result);
+        }
+    } catch (e) {
+        SpiderDebug.log(e);
+    }
+    return "";
+}
+
+// 辅助函数：只替换文字，不改变分隔符和结构
+function replacePlayUrlText(playUrl) {
+    if (!playUrl) return playUrl;
+    // 使用正则匹配 $$$ 或 # 作为分隔符，但保留原始分隔符不变
+    // 匹配模式：任意内容后跟 $$$ 或 #，或者末尾
+    let result = '';
+    let i = 0;
+    while (i < playUrl.length) {
+        // 查找 $$$ 或 # 的位置
+        let found = -1;
+        let sep = '';
+        let dollarPos = playUrl.indexOf('$$$', i);
+        let hashPos = playUrl.indexOf('#', i);
+        
+        if (dollarPos !== -1 && (hashPos === -1 || dollarPos < hashPos)) {
+            found = dollarPos;
+            sep = '$$$';
+        } else if (hashPos !== -1) {
+            found = hashPos;
+            sep = '#';
+        }
+        
+        if (found !== -1) {
+            let segment = playUrl.substring(i, found);
+            // 替换 segment 中 $ 前面的集数名称里的文字
+            let dollarInSegment = segment.indexOf('$');
+            if (dollarInSegment > 0) {
+                let episodeName = segment.substring(0, dollarInSegment);
+                let urlPart = segment.substring(dollarInSegment);
+                episodeName = episodeName.replace(/奇迹云/g, '');
+                result += episodeName + urlPart;
+            } else {
+                result += segment.replace(/奇迹云/g, '');
+            }
+            result += sep;
+            i = found + sep.length;
+        } else {
+            // 最后一段
+            let segment = playUrl.substring(i);
+            let dollarInSegment = segment.indexOf('$');
+            if (dollarInSegment > 0) {
+                let episodeName = segment.substring(0, dollarInSegment);
+                let urlPart = segment.substring(dollarInSegment);
+                episodeName = episodeName.replace(/奇迹云/g, '');
+                result += episodeName + urlPart;
+            } else {
+                result += segment.replace(/奇迹云/g, '');
+            }
+            break;
+        }
+    }
+    return result;
+}
+
+async function detail(ids) {
+    try {
+        // 苹果CMS V10模式检测
+        if (host.includes('/vod') || host.includes('/provide/vod')) {
+            const url = `${host}?ac=detail&ids=${ids}`;
+            const json = await request(url, getHeaders(url));
+            const obj = JSON.parse(json);
+            const result = { list: [] };
+            const vod = {};
+            
+            const data = obj.list && obj.list[0] ? obj.list[0] : {};
+            vod.vod_id = data.vod_id || ids;
+            vod.vod_name = (data.vod_name || "").replace(/奇迹云/g, '');
+            vod.vod_pic = data.vod_pic || "";
+            vod.type_name = (data.type_name || "").replace(/奇迹云/g, '');
+            vod.vod_year = (data.vod_year || "").replace(/奇迹云/g, '');
+            vod.vod_area = (data.vod_area || "").replace(/奇迹云/g, '');
+            vod.vod_remarks = (data.vod_remarks || "").replace(/奇迹云/g, '');
+            vod.vod_actor = (data.vod_actor || "").replace(/奇迹云/g, '');
+            vod.vod_director = (data.vod_director || "").replace(/奇迹云/g, '');
+            vod.vod_content = (data.vod_content || "").replace(/奇迹云/g, '');
+            
+            // 处理线路名称
+            let playFrom = data.vod_play_from || "";
+            if (playFrom) {
+                let lines = playFrom.split('$$$');
+                let newLines = [];
+                for (let line of lines) {
+                    if (line && line.toLowerCase().includes('qijiyun4k')) {
+                        newLines.push('奇迹');
+                    } else {
+                        newLines.push((line || "").replace(/奇迹云/g, ''));
+                    }
+                }
+                vod.vod_play_from = newLines.join('$$$');
+            } else {
+                vod.vod_play_from = "";
+            }
+            
+            // 处理选集：只替换文字，保留原始分隔符和结构
+            vod.vod_play_url = replacePlayUrlText(data.vod_play_url || "");
+            
+            result.list.push(vod);
+            return JSON.stringify(result);
+        } else {
+            // 原有AppYsV2模式
+            const apiUrl = host;
+            const url = getPlayUrlPrefix(apiUrl) + ids;
+
+            const json = await request(url, getHeaders(url));
+            const obj = JSON.parse(json);
+            const result = {
+                list: [],
+            };
+            const vod = {};
+            genPlayList(apiUrl, obj, json, vod, ids);
+            
+            // 替换详情中的所有文字
+            if (vod.vod_name) vod.vod_name = vod.vod_name.replace(/奇迹云/g, '');
+            if (vod.type_name) vod.type_name = vod.type_name.replace(/奇迹云/g, '');
+            if (vod.vod_year) vod.vod_year = vod.vod_year.replace(/奇迹云/g, '');
+            if (vod.vod_area) vod.vod_area = vod.vod_area.replace(/奇迹云/g, '');
+            if (vod.vod_remarks) vod.vod_remarks = vod.vod_remarks.replace(/奇迹云/g, '');
+            if (vod.vod_actor) vod.vod_actor = vod.vod_actor.replace(/奇迹云/g, '');
+            if (vod.vod_director) vod.vod_director = vod.vod_director.replace(/奇迹云/g, '');
+            if (vod.vod_content) vod.vod_content = vod.vod_content.replace(/奇迹云/g, '');
+            
+            // 替换线路名称
+            if (vod.vod_play_from) {
+                let lines = vod.vod_play_from.split('$$$');
+                let newLines = [];
+                for (let line of lines) {
+                    if (line && line.toLowerCase().includes('qijiyun4k')) {
+                        newLines.push('奇迹');
+                    } else {
+                        newLines.push((line || "").replace(/奇迹云/g, ''));
+                    }
+                }
+                vod.vod_play_from = newLines.join('$$$');
+            }
+            
+            // 处理选集：只替换文字，保留原始分隔符和结构
+            vod.vod_play_url = replacePlayUrlText(vod.vod_play_url || "");
+            
+            result.list.push(vod);
+            return JSON.stringify(result);
+        }
+    } catch (e) {
+        SpiderDebug.log(e);
+    }
+    return "";
+}
+
+async function play(flag, id, vipFlags) {
+    try {
+        let parseUrls = siteJx[flag];
+        if (!parseUrls) {
+            if (siteJx.hasOwnProperty('*')) {
+                parseUrls = siteJx['*'];
+            } else {
+                parseUrls = [];
+            }
+        }
+
+        if (parseUrls.length > 0) {
+            const result = await getFinalVideo(flag, parseUrls, id);
+            if (result !== null) {
+                return JSON.stringify(result);
+            }
+        }
+
+        if (isVideoFormat(id)) {
+            const result = {
+                parse: 0,
+                playUrl: "",
+                url: id
+            };
+            return JSON.stringify(result);
+        } else {
+            const result = {
+                parse: 1,
+                jx: "1",
+                url: id
+            };
+            return JSON.stringify(result);
+        }
+    } catch (e) {
+        SpiderDebug.log(e);
+    }
+    return "";
+}
+
+async function search(key, quick) {
+    try {
+        // 苹果CMS V10模式检测
+        if (host.includes('/vod') || host.includes('/provide/vod')) {
+            const url = `${host}?ac=videolist&wd=${encodeURIComponent(key)}&pg=1`;
+            const json = await request(url, getHeaders(url));
+            const obj = JSON.parse(json);
+            const videos = [];
+            
+            if (obj.list && Array.isArray(obj.list)) {
+                for (const item of obj.list) {
+                    videos.push({
+                        vod_id: item.vod_id,
+                        vod_name: (item.vod_name || "").replace(/奇迹云/g, ''),
+                        vod_pic: item.vod_pic || "",
+                        vod_remarks: (item.vod_remarks || "").replace(/奇迹云/g, '')
+                    });
+                }
+            }
+            return JSON.stringify({ list: videos });
+        } else {
+            // 原有AppYsV2模式
+            const apiUrl = host;
+            const url = getSearchUrl(apiUrl, encodeURIComponent(key));
+            const json = await request(url, getHeaders(url));
+            const obj = JSON.parse(json);
+            let jsonArray = null;
+            const videos = [];
+
+            if (obj.list instanceof Array) {
+                jsonArray = obj.list;
+            } else if (obj.data instanceof Object && obj.data.list instanceof Array) {
+                jsonArray = obj.data.list;
+            } else if (obj.data instanceof Array) {
+                jsonArray = obj.data;
+            }
+
+            if (jsonArray !== null) {
+                for (const vObj of jsonArray) {
+                    if (vObj.vod_id) {
+                        const v = {
+                            vod_id: vObj.vod_id,
+                            vod_name: (vObj.vod_name || "").replace(/奇迹云/g, ''),
+                            vod_pic: vObj.vod_pic,
+                            vod_remarks: (vObj.vod_remarks || "").replace(/奇迹云/g, '')
+                        };
+                        videos.push(v);
+                    } else {
+                        const v = {
+                            vod_id: vObj.nextlink,
+                            vod_name: (vObj.title || "").replace(/奇迹云/g, ''),
+                            vod_pic: vObj.pic,
+                            vod_remarks: (vObj.state || "").replace(/奇迹云/g, '')
+                        };
+                        videos.push(v);
+                    }
+                }
+            }
+
+            const result = { list: videos };
+            return JSON.stringify(result);
+        }
+    } catch (error) {
+        SpiderDebug.log(error);
+    }
+    return "";
+}
+
+// 辅助函数
+async function getFinalVideo(flag, parseUrls, url) {
+    let htmlPlayUrl = "";
+    for (const parseUrl of parseUrls) {
+        if (parseUrl === "" || parseUrl === "null") {
+            continue;
+        }
+        const playUrl = parseUrl + url;
+        const content = await request(playUrl, null, 10000);
+        let tryJson = null;
+        try {
+            tryJson = jsonParse(url, content);
+        } catch (error) { }
+
+        if (tryJson !== null && tryJson.hasOwnProperty("url") && tryJson.hasOwnProperty("header")) {
+            tryJson.header = JSON.stringify(tryJson.header);
+            return tryJson;
+        }
+
+        if (content.includes("<html")) {
+            let sniffer = false;
+            for (const p of htmlVideoKeyMatch) {
+                if (p.test(content)) {
+                    sniffer = true;
+                    break;
+                }
+            }
+            if (sniffer) {
+                htmlPlayUrl = parseUrl;
+            }
+        }
+    }
+
+    if (htmlPlayUrl !== "") {
+        const result = {
+                parse: 0,
+                playUrl: "",
+                url: url
+            };
+        return JSON.stringify(result);
+    }
+
+    return null;
+}
+
+function genPlayList(URL, object, json, vod, vid) {
+    const playUrls = [];
+    const playFlags = [];
+    
+    // 苹果CMS V10模式
+    if (URL.includes('/vod') || URL.includes('/provide/vod')) {
+        const data = object.list && object.list[0] ? object.list[0] : {};
+        vod.vod_id = data.vod_id || vid;
+        vod.vod_name = data.vod_name || "";
+        vod.vod_pic = data.vod_pic || "";
+        vod.type_name = data.type_name || "";
+        vod.vod_year = data.vod_year || "";
+        vod.vod_area = data.vod_area || "";
+        vod.vod_remarks = data.vod_remarks || "";
+        vod.vod_actor = data.vod_actor || "";
+        vod.vod_director = data.vod_director || "";
+        vod.vod_content = data.vod_content || "";
+        
+        vod.vod_play_from = data.vod_play_from || "";
+        vod.vod_play_url = data.vod_play_url || "";
+        return;
+    }
+
+    // AppYsV2模式
+    if (URL.includes("api.php/app") || URL.includes("xgapp")) {
+        const data = object.data || {};
+        vod.vod_id = data.vod_id || vid;
+        vod.vod_name = data.vod_name || "";
+        vod.vod_pic = data.vod_pic || "";
+        vod.type_name = data.vod_class || "";
+        vod.vod_year = data.vod_year || "";
+        vod.vod_area = data.vod_area || "";
+        vod.vod_remarks = data.vod_remarks || "";
+        vod.vod_actor = data.vod_actor || "";
+        vod.vod_director = data.vod_director || "";
+        vod.vod_content = data.vod_content || "";
+
+        // 处理播放源
+        if (data.vod_url_with_player && Array.isArray(data.vod_url_with_player)) {
+            for (const from of data.vod_url_with_player) {
+                let flag = from.code?.trim() || from.name?.trim() || "";
+                if (!flag) continue;
+                
+                playFlags.push(flag);
+                playUrls.push(from.url || "");
+                
+                // 处理解析地址
+                if (from.parse_api) {
+                    const parseUrls = parseUrlMap.get(flag) || [];
+                    if (!parseUrls.includes(from.parse_api)) {
+                        parseUrls.push(from.parse_api);
+                    }
+                    parseUrlMap.set(flag, parseUrls);
+                }
+            }
+        }
+    } else if (URL.includes(".vod")) {
+        const data = object.data || {};
+        vod.vod_id = data.vod_id || vid;
+        vod.vod_name = data.vod_name || "";
+        vod.vod_pic = data.vod_pic || "";
+        vod.type_name = data.vod_class || "";
+        vod.vod_year = data.vod_year || "";
+        vod.vod_area = data.vod_area || "";
+        vod.vod_remarks = data.vod_remarks || "";
+        vod.vod_actor = data.vod_actor || "";
+        vod.vod_director = data.vod_director || "";
+        vod.vod_content = data.vod_content || "";
+
+        if (data.vod_play_list && Array.isArray(data.vod_play_list)) {
+            for (const from of data.vod_play_list) {
+                let flag = from.player_info?.from?.trim() || from.player_info?.show?.trim() || "";
+                if (!flag) continue;
+                
+                playFlags.push(flag);
+                playUrls.push(from.url || "");
+                
+                // 处理解析地址
+                try {
+                    const parseUrls = parseUrlMap.get(flag) || [];
+                    if (from.player_info?.parse) {
+                        const parse1 = from.player_info.parse.split(",");
+                        parse1.forEach(purl => {
+                            if (purl && !parseUrls.includes(purl)) {
+                                parseUrls.push(purl);
+                            }
+                        });
+                    }
+                    if (from.player_info?.parse2) {
+                        const parse2 = from.player_info.parse2.split(",");
+                        parse2.forEach(purl => {
+                            if (purl && !parseUrls.includes(purl)) {
+                                parseUrls.push(purl);
+                            }
+                        });
+                    }
+                    parseUrlMap.set(flag, parseUrls);
+                } catch (e) {
+                    SpiderDebug.log(e);
+                }
+            }
+        }
+    } else if (urlPattern1.test(URL)) {
+        const data = object.list && object.list[0] ? object.list[0] : {};
+        vod.vod_id = data.vod_id || vid;
+        vod.vod_name = data.vod_name || "";
+        vod.vod_pic = data.vod_pic || "";
+        vod.type_name = data.type_name || "";
+        vod.vod_year = data.vod_year || "";
+        vod.vod_area = data.vod_area || "";
+        vod.vod_remarks = data.vod_remarks || "";
+        vod.vod_actor = data.vod_actor || "";
+        vod.vod_director = data.vod_director || "";
+        vod.vod_content = data.vod_content || "";
+
+        vod.vod_play_from = data.vod_play_from || "";
+        vod.vod_play_url = data.vod_play_url || "";
+    }
+
+    // 合并播放源
+    if (playFlags.length > 0 && playUrls.length > 0) {
+        vod.vod_play_from = playFlags.join("$$$");
+        vod.vod_play_url = playUrls.join("$$$");
+    }
+}
+
+function jsonParse(input, json) {
+    try {
+        let jsonPlayData = JSON.parse(json);
+        if (jsonPlayData.hasOwnProperty("data") && typeof jsonPlayData.data === "object" && !jsonPlayData.hasOwnProperty("url")) {
+            jsonPlayData = jsonPlayData.data;
+        }
+
+        let url = jsonPlayData.url;
+
+        if (url.startsWith("//")) {
+            url = "https:" + url;
+        }
+        if (!url.trim().startsWith("http")) {
+            return null;
+        }
+        if (url === input) {
+            if (isVip(url) || !isVideoFormat(url)) {
+                return null;
+            }
+        }
+        if (isBlackVodUrl(input, url)) {
+            return null;
+        }
+
+        let headers = {};
+        if (jsonPlayData.hasOwnProperty("header")) {
+            headers = jsonPlayData.header;
+        } else if (jsonPlayData.hasOwnProperty("Header")) {
+            headers = jsonPlayData.Header;
+        } else if (jsonPlayData.hasOwnProperty("headers")) {
+            headers = jsonPlayData.headers;
+        } else if (jsonPlayData.hasOwnProperty("Headers")) {
+            headers = jsonPlayData.Headers;
+        }
+
+        let ua = "";
+        if (jsonPlayData.hasOwnProperty("user-agent")) {
+            ua = jsonPlayData["user-agent"];
+        } else if (jsonPlayData.hasOwnProperty("User-Agent")) {
+            ua = jsonPlayData["User-Agent"];
+        }
+        if (ua.trim().length > 0) {
+            headers["User-Agent"] = " " + ua;
+        }
+
+        let referer = "";
+        if (jsonPlayData.hasOwnProperty("referer")) {
+            referer = jsonPlayData.referer;
+        } else if (jsonPlayData.hasOwnProperty("Referer")) {
+            referer = jsonPlayData.Referer;
+        }
+        if (referer.trim().length > 0) {
+            headers["Referer"] = " " + referer;
+        }
+
+        headers = fixJsonVodHeader(headers, input, url);
+
+        const taskResult = {
+            header: headers,
+            url: url,
+            parse: "0"
+        };
+
+        return taskResult;
+    } catch (error) {
+        SpiderDebug.log(error);
+    }
+    return null;
+}
+
+function isVip(url) {
+    try {
+        let isVip = false;
+        const host = new URL(url).hostname;
+        const vipWebsites = ["iqiyi.com", "v.qq.com", "youku.com", "le.com", "tudou.com", "mgtv.com", "sohu.com", "acfun.cn", "bilibili.com", "baofeng.com", "pptv.com"];
+        for (let b = 0; b < vipWebsites.length; b++) {
+            if (host.includes(vipWebsites[b])) {
+                if (vipWebsites[b] === "iqiyi.com") {
+                    if (url.includes("iqiyi.com/a_") || url.includes("iqiyi.com/w_") || url.includes("iqiyi.com/v_")) {
+                        isVip = true;
+                        break;
+                    }
                 } else {
+                    isVip = true;
                     break;
                 }
             }
         }
-        
-        if (response.code === 0 &&
-            (!response.data || response.data.length === 0) &&
-            response.msg &&
-            /等.*秒|等待.*秒|等|搜|请等待|稍等|稍候/i.test(response.msg)) {
-            if (waitRetryCount >= maxWaitRetries) break;
-            let waitSeconds = extractWaitTime(response.msg);
-            if (waitSeconds < 1) waitSeconds = 2;
-            if (waitSeconds > 30) waitSeconds = 30;
-            const actualWait = waitSeconds + 1;
-            await new Promise(resolve => setTimeout(resolve, actualWait * 1000));
-            waitRetryCount++;
-            continue;
-        }
-        
-        if (response.data && response.data.length > 0) {
-            let decodedData = JSON.parse(aesDecode(response.data, key, iv));
-            videos = decodedData.search_list || [];
-            break;
-        } else if (!forceVerifyCode && (Searchstatus || (response.code === 0 && response.msg && response.msg.includes('验证码')))) {
-            if (attemptedCaptcha) break;
-            attemptedCaptcha = true;
-            const random_uuid = generateUUID();
-            let modifiedApiPrefix = apiPrefix.replace('.index', '');
-            let verifyUrl = `${siteUrl}/${modifiedApiPrefix}.verify/create?key=${random_uuid}`;
-            let base64Img = await request_text(verifyUrl, null, headers, 'get', true);
-            base64Img = base64Img.replace(/\n/g, '');
-            let ocrResult = await request_text('https://api.nn.ci/ocr/b64/text',   base64Img, { 'User-Agent': 'okhttp/3.10.0' }, 'post');
-            params['code'] = ocrResult.trim();
-            params['key'] = random_uuid;
-            retryCount++;
-            continue;
-        } else {
-            break;
-        }
+        return isVip;
+    } catch (e) {
+        SpiderDebug.log(e);
     }
-    
-    return JSON.stringify({
-        list: videos,
-    });
+    return false;
 }
- 
-function generateUUID() {
-    const chars = '0123456789abcdef';
-    const uuidTemplate = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
-    return uuidTemplate.replace(/[xy]/g, (c) => {
-        const r = Math.random() * 16 | 0;
-        const v = c === 'x' ? r : (r & 0x3 | 0x8);
-        return chars[v];
-    });
+
+function isBlackVodUrl(input, url) {
+    return url.includes("973973.xyz") || url.includes(".fit:");
 }
- 
-function aesDecode(str, keyStr, ivStr, type) {
-    const key = Crypto.enc.Utf8.parse(keyStr);
-    if (type === 'hex') {
-        str = Crypto.enc.Hex.parse(str);
-        return Crypto.AES.decrypt({
-            ciphertext: str
-        }, key, {
-            iv: Crypto.enc.Utf8.parse(ivStr),
-            mode: Crypto.mode.CBC,
-            padding: Crypto.pad.Pkcs7 
-        }).toString(Crypto.enc.Utf8);
+
+function fixJsonVodHeader(headers, input, url) {
+    if (headers === null) {
+        headers = {};
+    }
+
+    if (input.includes("www.mgtv.com")) {
+        headers["Referer"] = " ";
+        headers["User-Agent"] = " Mozilla/5.0";
+    } else if (url.includes("titan.mgtv")) {
+        headers["Referer"] = " ";
+        headers["User-Agent"] = " Mozilla/5.0";
+    } else if (input.includes("bilibili")) {
+        headers["Referer"] = " https://www.bilibili.com/";
+        headers["User-Agent"] = " " + "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36";
+    }
+
+    return headers;
+}
+
+const snifferMatch = /http((?!http).){26,}?\.(m3u8|mp4|flv|avi|mkv|rm|wmv|mpg)\?.*|http((?!http).){26,}\.(m3u8|mp4|flv|avi|mkv|rm|wmv|mpg)|http((?!http).){26,}\/m3u8\?pt=m3u8.*|http((?!http).)*?default\.ixigua\.com\/.*|http((?!http).)*?cdn-tos[^\?]*|http((?!http).)*?\/obj\/tos[^\?]*|http.*?\/player\/m3u8play\.php\?url=.*|http.*?\/player\/.*?[pP]lay\.php\?url=.*|http.*?\/playlist\/m3u8\/\?vid=.*|http.*?\.php\?type=m3u8&.*|http.*?\/download.aspx\?.*|http.*?\/api\/up_api.php\?.*|https.*?\.66yk\.cn.*|http((?!http).)*?netease\.com\/file\/.*/;
+
+function isVideoFormat(url) {
+    if (snifferMatch.test(url)) {
+        return !url.includes("cdn-tos") || !url.includes(".js");
+    }
+    return false;
+}
+
+function isVideo(url) {
+    return !url.includes(".mp4") && !url.includes(".m3u8");
+}
+
+function UA(url) {
+    if (url.includes(".vod")) {
+        return "okhttp/4.1.0";
+    }
+    return "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36";
+}
+
+function getCateUrl(URL) {
+    if (URL.includes("api.php/app") || URL.includes("xgapp")) {
+        return URL + "nav?token=";
+    } else if (URL.includes(".vod")) {
+        return URL + "/types";
     } else {
-        return Crypto.AES.decrypt(str, key, {
-            iv: Crypto.enc.Utf8.parse(ivStr),
-            mode: Crypto.mode.CBC,
-            padding: Crypto.pad.Pkcs7
-        }).toString(Crypto.enc.Utf8);
+        return "";
     }
 }
- 
-function aesEncode(str, keyStr, ivStr, type) {
-    const key = Crypto.enc.Utf8.parse(keyStr);
-    let encData = Crypto.AES.encrypt(str, key, {
-        iv: Crypto.enc.Utf8.parse(ivStr),
-        mode: Crypto.mode.CBC,
-        padding: Crypto.pad.Pkcs7 
-    });
-    if (type === 'hex') return encData.ciphertext.toString(Crypto.enc.Hex);
-    return encData.toString();
+
+function getPlayUrlPrefix(URL) {
+    if (URL.includes("api.php/app") || URL.includes("xgapp")) {
+        return URL + "video_detail?id=";
+    } else if (URL.includes(".vod")) {
+        return URL + "/detail?vod_id=";
+    } else {
+        return "";
+    }
 }
- 
-function md5(text) {
-    return Crypto.MD5(text).toString();
+
+function getRecommendUrl(URL) {
+    if (URL.includes("api.php/app") || URL.includes("xgapp")) {
+        return URL + "index_video?token=";
+    } else if (URL.includes(".vod")) {
+        return URL + "/vodPhbAll";
+    } else {
+        return "";
+    }
 }
- 
-function chineseToNumber(chineseStr) {
-    const chineseNumMap = {
-        '零': 0, '〇': 0, '一': 1, '壹': 1, '二': 2, '贰': 2, '两': 2,
-        '三': 3, '叁': 3, '四': 4, '肆': 4, '五': 5, '伍': 5,
-        '六': 6, '陆': 6, '七': 7, '柒': 7, '八': 8, '捌': 8,
-        '九': 9, '玖': 9, '十': 10, '拾': 10 
-    };
-   
-    if (chineseStr.length === 1) {
-        return chineseNumMap[chineseStr] || 2;
+
+function getFilterTypes(URL, typeExtend) {
+    let str = "";
+
+    if (typeExtend !== null) {
+        for (let key in typeExtend) {
+            if (key === "class" || key === "area" || key === "lang" || key === "year") {
+                try {
+                    str += "筛选" + key + "+全部=+" + typeExtend[key].replace(/,/g, "+") + "\n";
+                } catch (e) { }
+            }
+        }
     }
-   
-    if (chineseStr.startsWith('十') && chineseStr.length === 2) {
-        const units = chineseNumMap[chineseStr[1]];
-        return units ? 10 + units : 10;
+
+    if (URL.includes(".vod")) {
+        str += "\n" + "排序+全部=+最新=time+最热=hits+评分=score";
+    } else if (URL.includes("api.php/app") || URL.includes("xgapp")) {
+        // Do nothing, leave the string as it is.
+    } else {
+        str = "分类+全部=+电影=movie+连续剧=tvplay+综艺=tvshow+动漫=comic+4K=movie_4k+体育=tiyu\n筛选class+全部=+喜剧+爱情+恐怖+动作+科幻+剧情+战争+警匪+犯罪+动画+奇幻+武侠+冒险+枪战+恐怖+悬疑+惊悚+经典+青春+文艺+微电影+古装+历史+运动+农村+惊悚+惊悚+伦理+情色+福利+三级+儿童+网络电影\n筛选area+全部=+大陆+香港+台湾+美国+英国+法国+日本+韩国+德国+泰国+印度+西班牙+加拿大+其他\n筛选year+全部=+2025+2024+2023+2022+2021+2020+2019+2018+2017+2016+2015+2014+2013+2012+2011+2010+2009+2008+2007+2006+2005+2004+2003+2002+2001+2000";
     }
-   
-    if (chineseStr.endsWith('十') && chineseStr.length === 2) {
-        const tens = chineseNumMap[chineseStr[0]];
-        return tens ? tens * 10 : 10;
-    }
-   
-    if (chineseStr.length === 3 && chineseStr.includes('十')) {
-        const tens = chineseNumMap[chineseStr[0]];
-        const units = chineseNumMap[chineseStr[2]];
-        return tens && units ? tens * 10 + units : (tens ? tens * 10 : 10);
-    }
-   
-    return 2;
+
+    return str;
 }
- 
-function extractWaitTime(message) {
-    const digitMatch = message.match(/(\d+)\s*秒/);
-    if (digitMatch && digitMatch[1]) {
-        return parseInt(digitMatch[1], 10);
+
+function getCateFilterUrlSuffix(URL) {
+    if (URL.includes("api.php/app") || URL.includes("xgapp")) {
+        return "&class=筛选class&area=筛选area&lang=筛选lang&year=筛选year&limit=18&pg=#PN#";
+    } else if (URL.includes(".vod")) {
+        return "&class=筛选class&area=筛选area&lang=筛选lang&year=筛选year&by=排序&limit=18&page=#PN#";
+    } else {
+        return "&page=#PN#&area=筛选area&type=筛选class&start=筛选year";
     }
-   
-    const chineseMatch = message.match(/([零一二三四五六七八九十两壹贰叁肆伍陆柒捌玖拾〇]+)\s*秒/);
-    if (chineseMatch && chineseMatch[1]) {
-        return chineseToNumber(chineseMatch[1]);
-    }
-   
-    if (/几秒|数秒|若干秒/i.test(message)) {
-        return 3;
-    }
-   
-    return 2;
 }
- 
-function hexToDec(hex) {
-    hex = (hex || '#FFFFFF').replace(/^#/, '').toUpperCase();
-    if (hex.length !== 6) {
-        while (hex.length < 6) hex += '0';
-        hex = hex.slice(0, 6);
+
+function getCateFilterUrlPrefix(URL) {
+    if (URL.includes("api.php/app") || URL.includes("xgapp")) {
+        return URL + "video?tid=";
+    } else if (URL.includes(".vod")) {
+        return URL + "?type=";
+    } else {
+        return URL + "?ac=list&class=";
     }
-    return parseInt(hex, 16);
 }
- 
-function escapeXml(str) {
-    if (typeof str !== 'string') return '';
-    return str 
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&apos;');
+
+function isBan(key) {
+    return key === "伦理" || key === "情色" || key === "福利";
 }
- 
-function jsonDanmakuToXml(json) {
-    if (!json || !json.danmuku || !Array.isArray(json.danmuku)) {
-        return '<?xml version="1.0" encoding="utf-8"?><i><code>0</code><id>error_no_danmaku</id></i>';
+
+function getSearchUrl(URL, KEY) {
+    if (URL.includes(".vod")) {
+        return URL + "?wd=" + KEY + "&page=";
+    } else if (URL.includes("api.php/app") || URL.includes("xgapp")) {
+        return URL + "search?text=" + KEY + "&pg=";
+    } else if (urlPattern1.test(URL)) {
+        return URL + "?ac=list&zm=" + KEY + "&page=";
     }
-    let lines = [];
-    lines.push('<?xml version="1.0" encoding="utf-8"?>');
-    lines.push('<i>');
-    lines.push(` <code>${json.code || 0}</code>`);
-    lines.push(` <id>${escapeXml(json.name || '12345')}</id>`);
-    const positionMap = {
-        'top': 5,
-        'right': 1,
-        'bottom': 4,
-        'left': 6,
-        'scroll': 1 
-    };
-    json.danmuku.forEach(danmu => {
-        if (!Array.isArray(danmu) || danmu.length < 5) return;
-        let [
-            time = 0,
-            mode = 'scroll',
-            colorHex = '#FFFFFF',
-            ,
-            text = '',
-            , ,
-            fontSize = "24px"
-        ] = danmu;
-        colorHex = '#' + Array(6).fill(0).map(() => '0123456789ABCDEF'[Math.floor(Math.random() * 16)]).join('');
-        
-        let pos = positionMap[mode] || 1;
-        let colorDec = hexToDec(colorHex);
-        let fs = parseInt(String(fontSize).replace(/px/gi, '')) || 24;
-        let p = `${Number(time).toFixed(3)},${pos},${fs},${colorDec},,,,,`;
-        let safeText = escapeXml(text);
-        lines.push(` <d p="${p}">${safeText}</d>`);
-    });
-    lines.push('</i>');
-    return lines.join('\n');
+    return "";
 }
- 
-async function proxy(params) {
-    let jsonUrl = decodeURIComponent(
-        params.url || params[0] || params.danmaku || '' || ''
-    );
-    if (!jsonUrl || !jsonUrl.startsWith('http')) {
-        return JSON.stringify({
-            code: 400,
-            content: "缺少有效的弹幕 URL",
-            headers: { "Content-Type": "text/plain" }
-        });
-    }
-    let jsonContent = await request_text(jsonUrl, null, headers, 'get');
-    let jsonObj = JSON.parse(jsonContent);
-    let xmlContent = jsonDanmakuToXml(jsonObj);
-    return JSON.stringify({
-        code: 200,
-        content: xmlContent,
-        headers: {
-            "Content-Type": "text/xml; charset=utf-8",
-            "Cache-Control": "no-cache"
+
+function findJsonArray(obj, match, result) {
+    Object.keys(obj).forEach((k) => {
+        try {
+            const o = obj[k];
+            if (k === match && Array.isArray(o)) {
+                result.push(o);
+            }
+            if (typeof o === "object" && o !== null) {
+                if (Array.isArray(o)) {
+                    o.forEach((item) => {
+                        if (typeof item === "object" && item !== null) {
+                            findJsonArray(item, match, result);
+                        }
+                    });
+                } else {
+                    findJsonArray(o, match, result);
+                }
+            }
+        } catch (e) {
+            SpiderDebug.log(e);
         }
     });
 }
- 
-let forceVerifyCode = null;
- 
+
+function jsonArr2Str(array) {
+    const strings = [];
+    for (let i = 0; i < array.length; i++) {
+        try {
+            strings.push(array[i]);
+        } catch (e) {
+            SpiderDebug.log(e);
+        }
+    }
+    return strings.join(",");
+}
+
+function getHeaders(URL) {
+    const headers = {};
+    headers["User-Agent"] = UA(URL);
+    return headers;
+}
+
+function isJsonString(str) {
+    try {
+        JSON.parse(str);
+    } catch (e) {
+        return false;
+    }
+    return true;
+}
+
 export function __jsEvalReturn() {
     return {
         init: init,
@@ -828,6 +1064,5 @@ export function __jsEvalReturn() {
         detail: detail,
         play: play,
         search: search,
-        proxy: proxy 
     };
 }
