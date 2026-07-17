@@ -88,6 +88,7 @@ CCTV12,http://110.42.52.180:6688/live/live.php?token=1yeiVihw&id=cctv12&zy.m3u8
 CCTV13,http://110.42.52.180:6688/live/live.php?token=1yeiVihw&id=cctv13&zy.m3u8
 CCTV14,http://110.42.52.180:6688/live/live.php?token=1yeiVihw&id=cctv14
 CCTV15,http://110.42.52.180:6688/live/live.php?token=1yeiVihw&id=cctv15&zy.m3u8
+CCTV16,http://110.42.52.180:6688/live/live.php?token=1yeiVihw&id=cctv16&zy.m3u8
 CCTV17,http://110.42.52.180:6688/live/live.php?token=1yeiVihw&id=cctv17&zy.m3u8
 北京卫视,http://110.42.52.180:6688/live/live.php?token=1yeiVihw&id=bjws&zy.m3u8
 东方卫视,http://110.42.52.180:6688/live/live.php?token=1yeiVihw&id=dfws&zy.m3u8
