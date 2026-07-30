@@ -246,7 +246,7 @@ class Spider(Spider):
                         eps.extend(f.result() or [])
             if eps:
                 vod.update({
-                    "vod_play_from": "播放列表",
+                    "vod_play_from": "爱听音乐",
                     "vod_play_url": "#".join(eps)
                 })
                 return {"list": [vod]}
