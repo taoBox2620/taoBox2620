@@ -449,7 +449,7 @@ class Spider(Spider):
                 "vod_name": info['title'],
                 "vod_pic": info['cover']['url_list'][0],
                 "vod_actor": info['owner']['nickname'],
-                "vod_content": "QQ交流群:212706934"+info['title'],
+                "vod_content": "TAO管家中更新"+info['title'],
                 "vod_play_from": vod_play_from,
                 "vod_play_url": vod_play_url
             }
