@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
-"""
-tvbox 插件 - 蛋挞TV（兼容基类修正版）
-站点: https://www.dantatv.cc
-"""
+# by @6666
+import concurrent.futures
 import json
+import re
 import sys
-from base64 import b64encode, b64decode
-
+import time
+from base64 import b64decode, b64encode
+import requests
+from pyquery import PyQuery as pq
 sys.path.append('..')
 from base.spider import Spider
 
@@ -14,11 +15,24 @@ from base.spider import Spider
 class Spider(Spider):
 
     def init(self, extend=""):
-        self.host = "https://www.dantatv.cc"
-        pass
+        self.host = "https://vip.wwgz.cn:5200"
+        self.headers = {
+            'User-Agent': 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36',
+            'Referer': self.host + '/',
+            'Accept': 'text/html'
+        }
+        self.cateConfig = {
+            "12": [{"key": "cateId", "name": "类型", "value": [{"n": "国产剧", "v": "12"}]}],
+            "4": [{"key": "cateId", "name": "类型", "value": [{"n": "动漫", "v": "4"}]}],
+            "1": [{"key": "cateId", "name": "类型", "value": [{"n": "电影", "v": "1"}]}],
+            "2": [{"key": "cateId", "name": "类型", "value": [{"n": "电视剧", "v": "2"}]}],
+            "3": [{"key": "cateId", "name": "类型", "value": [{"n": "综艺", "v": "3"}]}],
+            "26": [{"key": "cateId", "name": "类型", "value": [{"n": "短剧", "v": "26"}]}]
+        }
+        self.filterConfig = {}
 
     def getName(self):
-        pass
+        return "农民影视"
 
     def isVideoFormat(self, url):
         pass
@@ -29,17 +43,221 @@ class Spider(Spider):
     def destroy(self):
         pass
 
-    # ---------- 辅助函数 ----------
-    def getheader(self, content_type=None):
-        headers = {
-            'Unique-Origin': 'B9A378A8C39BDA1277D2D6185FCE2695',
-            'User-Agent': 'okhttp/4.1.0/luob.app',
-            'Connection': 'Keep-Alive',
-            'Accept-Encoding': 'gzip',
-        }
-        if content_type:
-            headers['Content-Type'] = content_type
-        return headers
+    def homeContent(self, filter):
+        result = {}
+        classes = [
+            {'type_name': '国产剧', 'type_id': '12'},
+            {'type_name': '动漫', 'type_id': '4'},
+            {'type_name': '电影', 'type_id': '1'},
+            {'type_name': '电视剧', 'type_id': '2'},
+            {'type_name': '综艺', 'type_id': '3'},
+            {'type_name': '短剧', 'type_id': '26'}
+        ]
+        try:
+            data = self.fetch(self.host, headers=self.headers).text
+            doc = pq(data)
+            videos = []
+            # 修改选择器并添加去重逻辑
+            seen_ids = set()  # 用于记录已处理的影片ID
+            for item in doc('.globalPicList li:has(img)').items():
+                vod_id = self.host + item('a').attr('href')
+                if vod_id not in seen_ids:  # 检查是否已处理过
+                    seen_ids.add(vod_id)  # 记录已处理的ID
+                    pic_url = item('img').attr('data-echo') or item('img').attr('data-src') or item('img').attr('src')
+                    # 替换图片域名
+                    if pic_url and 'pic.lzzypic.com' in pic_url:
+                        pic_url = pic_url.replace('https://pic.lzzypic.com', 'https://img.lzzyimg.com')
+                    videos.append({
+                        'vod_id': vod_id,
+                        'vod_name': item('.sTit').text(),
+                        'vod_pic': pic_url,
+                        'vod_remarks': item('.sBottom').text()
+                    })
+            result['class'] = classes
+            result['filters'] = self.cateConfig
+            result['list'] = videos
+        except Exception as e:
+            print(f"首页数据获取失败: {str(e)}")
+            result['class'] = classes
+            result['filters'] = self.cateConfig
+            result['list'] = []
+        return result
+
+    def homeVideoContent(self):
+        pass
+
+    def categoryContent(self, tid, pg, filter, extend):
+        result = {}
+        try:
+            if tid == "4-dm":
+                # 处理大陆人气动漫分类
+                url = "https://www.wwgz.cn/vod-list-id-4-pg-{}-order--by-hits-class-0-year-0-letter--area-大陆-lang-.html".format(pg)
+            else:
+                cateId = tid
+                url = f"{self.host}/vod-list-id-{cateId}-pg-{pg}.html"
+                
+            data = self.fetch(url, headers=self.headers).text
+            doc = pq(data)
+            
+            videos = []
+            for item in doc('.globalPicList li').items():
+                pic_url = item('img').attr('data-echo') or item('img').attr('data-src') or item('img').attr('src')
+                # 替换图片域名
+                if pic_url and 'pic.lzzypic.com' in pic_url:
+                    pic_url = pic_url.replace('https://pic.lzzypic.com', 'https://img.lzzyimg.com')
+                videos.append({
+                    'vod_id': self.host + item('a').attr('href'),
+                    'vod_name': item('.sTit').text(),
+                    'vod_pic': pic_url,
+                    'vod_remarks': item('.sBottom').text()
+                })
+            
+            result['list'] = videos
+            result['page'] = pg
+            result['pagecount'] = 9999
+            result['limit'] = 90
+            result['total'] = 999999
+        except Exception as e:
+            print(f"分类数据获取失败: {str(e)}")
+            result['list'] = []
+            result['page'] = pg
+            result['pagecount'] = 1
+            result['limit'] = 90
+            result['total'] = 0
+        return result
+
+    def detailContent(self, ids):
+        result = {}
+        try:
+            url = ids[0]
+            data = self.fetch(url, headers=self.headers).text
+            doc = pq(data)
+            
+            # 获取播放线路和剧集
+            play_from = []
+            play_url = []
+            
+            tab_box = doc('#leftTabBox')
+            if tab_box:
+                for tab in tab_box('ul li').items():
+                    play_from.append(tab.text())
+                
+                play_lists = []
+                for num_list in tab_box('.numList').items():
+                    episodes = []
+                    # 修改这里：将items()转换为列表后反转顺序
+                    for ep in list(num_list('li').items())[::-1]:  # 反转列表顺序
+                        episodes.append(f"{ep('a').text()}${self.host}{ep('a').attr('href')}")
+                    play_lists.append('#'.join(episodes))
+                
+                play_url = play_lists
+            
+            # 获取详情信息
+            vod = {
+                'vod_name': doc('h1 a').text(),
+                'vod_year': doc('span:contains("年代：")').text().replace('年代：', ''),
+                'vod_area': '',
+                'vod_actor': doc('.sDes:contains("主演:")').text().replace('主演:', ''),
+                'vod_director': '',
+                'vod_content': doc('.detail-con p').text().replace('简介:', ''),
+                'vod_play_from': '$$$'.join(play_from),
+                'vod_play_url': '$$$'.join(play_url)
+            }
+            result['list'] = [vod]
+        except Exception as e:
+            print(f"详情数据获取失败: {str(e)}")
+            result['list'] = []
+        return result
+
+    def searchContent(self, key, quick, pg="1"):
+        result = {}
+        try:
+            url = f"{self.host}/index.php?m=vod-search"
+            data = {'wd': key}
+            headers = {
+                'User-Agent': self.headers['User-Agent'],
+                'Referer': self.host + '/'
+            }
+            html = self.post(url, data=data, headers=headers).text
+            doc = pq(html)
+            
+            videos = []
+            for item in doc('#data_list li').items():
+                pic_url = item('.lazyload').attr('data-src')
+                # 替换图片域名
+                if pic_url and 'pic.lzzypic.com' in pic_url:
+                    pic_url = pic_url.replace('https://pic.lzzypic.com', 'https://img.lzzyimg.com')
+                videos.append({
+                    'vod_id': self.host + item('a').attr('href'),
+                    'vod_name': item('.sTit').text(),
+                    'vod_pic': pic_url,
+                    'vod_remarks': item('.sDes').eq(-1).text()
+                })
+            
+            result['list'] = videos
+            result['page'] = pg
+        except Exception as e:
+            print(f"搜索数据获取失败: {str(e)}")
+            result['list'] = []
+            result['page'] = pg
+        return result
+
+    def playerContent(self, flag, id, vipFlags):
+        result = {}
+        try:
+            if '@' in id:
+                ids = id.split('@')
+                if not ids[0]:
+                    raise Exception('未找到播放地址')
+                
+                js_url = f"{self.host}/player/{ids[0]}.js"
+                js_data = self.fetch(js_url, headers=self.headers).text
+                jxurl = re.search(r'http.*?url=', js_data).group()
+                
+                data = self.fetch(f"{jxurl}{ids[1]}", headers=self.headers).text
+                matches = re.findall(r'http.*?url=', data)
+                
+                if matches:
+                    url = []
+                    for i, x in enumerate(matches):
+                        js = {'jx': x, 'id': ids[1]}
+                        purl = f"{self.getProxyUrl()}&wdict={self.e64(json.dumps(js))}"
+                        url.extend([f'线路{i + 1}', purl])
+                else:
+                    url = re.search(r"url='(.*?)'", data).group(1)
+                
+                if not url:
+                    raise Exception('未找到播放地址')
+                
+                p = 0
+            else:
+                p, url = 1, id
+            
+            result['parse'] = p
+            result['url'] = url
+            result['header'] = self.headers
+        except Exception as e:
+            print(f"播放数据获取失败: {str(e)}")
+            result['parse'] = 1
+            result['url'] = id
+            result['header'] = self.headers
+        return result
+
+    def localProxy(self, param):
+        try:
+            wdict = json.loads(self.d64(param['wdict']))
+            url = f"{wdict['jx']}{wdict['id']}"
+            data = self.fetch(url, headers=self.headers).text
+            doc = pq(data)
+            html = doc('script').eq(-1).text()
+            url = re.search(r'src="(.*?)"', html).group(1)
+            return [302, 'text/html', None, {'Location': url}]
+        except Exception as e:
+            print(f"代理处理失败: {str(e)}")
+            return [500, 'text/plain', str(e).encode('utf-8')]
+
+    def liveContent(self, url):
+        pass
 
     def e64(self, text):
         try:
@@ -58,198 +276,3 @@ class Spider(Spider):
         except Exception as e:
             print(f"Base64解码错误: {str(e)}")
             return ""
-
-    # ---------- 首页（固定分类） ----------
-    def homeContent(self, filter):
-        classes = [
-            {"type_name": "剧集","type_id": "1"},
-            {"type_name": "电影","type_id": "2"},
-            {"type_name": "动漫","type_id": "3"},
-            {"type_name": "短剧","type_id": "4"},
-            {"type_name": "综艺","type_id": "5"},
-            {"type_name": "少儿", "type_id": "30"},
-        ]
-        return {"class": classes, "filters": {}}
-
-    # ---------- 首页推荐视频 ----------
-    def homeVideoContent(self):
-        url = f"{self.host}/api/index"
-        headers = self.getheader()
-        try:
-            resp = self.fetch(url, headers=headers)
-            data = resp.json()
-            vod_list = []
-            if data.get('data'):
-                for item in data['data'][0].get('vodList', []):
-                    vod_list.append(self._vod_to_common(item))
-        except Exception as e:
-            print(f"首页推荐请求失败: {e}")
-            vod_list = []
-        return {'list': vod_list}
-
-    # ---------- 分类页（POST请求改用 self.post） ----------
-    def categoryContent(self, tid, pg, filter, extend=None):
-        if extend is None:
-            extend = {}
-        body = {
-            "typeId1": int(tid),
-            "pageNum": int(pg),
-            "pageSize": 12,
-            "sortField": "vod_time",
-            "vodClass": extend.get('class', ''),
-            "vodArea": extend.get('area', ''),
-            "vodYear": extend.get('year', '')
-        }
-        url = f"{self.host}/api/search/type"
-        headers = self.getheader(content_type='application/json')
-        try:
-            # 使用基类的 post 方法（若基类无 post，可改为 requests.post 自行实现）
-            resp = self.post(url, headers=headers, data=json.dumps(body).encode('utf-8'))
-            data = resp.json()
-            vod_list = [self._vod_to_common(item) for item in data.get('data', [])]
-        except Exception as e:
-            print(f"分类页请求失败: {e}")
-            vod_list = []
-        return {
-            'list': vod_list,
-            'page': pg,
-            'pagecount': 9999,
-            'limit': 12,
-            'total': 999999
-        }
-
-    # ---------- 详情页 ----------
-    def detailContent(self, ids):
-        vod_id = ids[0]
-        url = f"{self.host}/api/vod/play?vodId={vod_id}"
-        headers = self.getheader()
-        try:
-            resp = self.fetch(url, headers=headers)
-            data = resp.json()
-            vod = data.get('data', {}).get('dantaVod', {})
-        except Exception as e:
-            print(f"详情请求失败: {e}")
-            return {'list': []}
-
-        if not vod:
-            return {'list': []}
-
-        info = {
-            'vod_id': vod.get('vodId'),
-            'vod_name': vod.get('vodName'),
-            'vod_pic': self._fix_pic(vod.get('vodPic')),
-            'vod_actor': vod.get('vodActor'),
-            'vod_director': vod.get('vodDirector'),
-            'vod_blurb': vod.get('vodContent') or vod.get('vodBlurb'),
-            'vod_area': vod.get('vodArea'),
-            'vod_year': vod.get('vodYear'),
-            'vod_remarks': vod.get('vodRemarks'),
-            'vod_lang': vod.get('vodLang'),
-            'vod_class': vod.get('vodClass'),
-        }
-
-        sources = vod.get('sources', [])
-        vod_play_from = []
-        vod_play_url = []
-        for idx, src in enumerate(sources):
-            collect_id = src.get('collectId')
-            raw_url = src.get('vodPlayUrl', '')
-            if not raw_url:
-                continue
-
-            items = raw_url.split('#')
-            encoded_items = []
-            for part in items:
-                if '$' not in part:
-                    continue
-                name, link = part.split('$', 1)
-                payload = {"collectId": collect_id, "url": link}
-                enc = self.e64(json.dumps(payload, ensure_ascii=False))
-                encoded_items.append(f"{name}${enc}")
-
-            if encoded_items:
-                line_name = src.get('collectName') or src.get('vodPlayFrom') or f"线路{idx+1}"
-                vod_play_from.append(line_name)
-                vod_play_url.append('#'.join(encoded_items))
-
-        info['vod_play_from'] = '$$$'.join(vod_play_from)
-        info['vod_play_url'] = '$$$'.join(vod_play_url)
-        return {'list': [info]}
-
-    # ---------- 搜索 ----------
-    def searchContent(self, key, quick, pg="1"):
-        url = f"{self.host}/api/search/keyword"
-        params = {"keyword": key, "pageNum": pg, "pageSize": 10}
-        headers = self.getheader()
-        try:
-            resp = self.fetch(url, headers=headers, params=params)
-            data = resp.json()
-            vod_list = [self._vod_to_common(item) for item in data.get('data', [])]
-        except Exception as e:
-            print(f"搜索失败: {e}")
-            vod_list = []
-        return {'list': vod_list, 'page': pg}
-
-    # ---------- 播放解析 ----------
-    def playerContent(self, flag, id, vipFlags):
-        try:
-            payload = json.loads(self.d64(id))
-            collect_id = payload.get('collectId')
-            raw_url = payload.get('url')
-            if not collect_id or not raw_url:
-                raise ValueError("缺少参数")
-        except:
-            return {
-                'parse': 1,
-                'url': '',
-                'header': {'User-Agent': 'okhttp/4.1.0/luob.app'}
-            }
-
-        parse_url = f"{self.host}/api/vod/parse"
-        params = {"collectId": collect_id, "url": raw_url}
-        headers = self.getheader()
-        try:
-            resp = self.fetch(parse_url, headers=headers, params=params)
-            if resp.status_code == 200:
-                result = resp.json()
-                final_url = result.get('data') or result.get('url')
-                if final_url:
-                    return {
-                        'parse': 0,
-                        'url': final_url,
-                        'header': {'User-Agent': 'okhttp/4.1.0/luob.app'}
-                    }
-        except Exception as e:
-            print(f"解析失败: {e}")
-
-        return {
-            'parse': 1,
-            'url': raw_url,
-            'header': {'User-Agent': 'okhttp/4.1.0/luob.app'}
-        }
-
-    # ---------- 内部辅助：字段映射 ----------
-    def _vod_to_common(self, item):
-        remark = item.get('vodRemarks', '')
-        color = item.get('vodColor')
-        if color:
-            remark = f"[{color}] {remark}" if remark else color
-
-        return {
-            'vod_id': item.get('vodId'),
-            'vod_name': item.get('vodName'),
-            'vod_pic': self._fix_pic(item.get('vodPic')),
-            'vod_remarks': remark,
-            'vod_year': item.get('vodYear'),
-            'vod_area': item.get('vodArea'),
-            'vod_actor': item.get('vodActor'),
-            'vod_director': item.get('vodDirector'),
-            'vod_lang': item.get('vodLang'),
-            'vod_class': item.get('vodClass'),
-        }
-
-    def _fix_pic(self, pic):
-        """补全相对路径图片"""
-        if pic and pic.startswith('/'):
-            return self.host + pic
-        return pic
