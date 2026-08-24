@@ -158,7 +158,7 @@ class Spider(Spider):
             # 获取简介内容，优先使用API返回的desc或description，否则使用默认简介
             content = data_info.get('desc', data_info.get('description', '')).strip()
             if not content:
-                content = '醉卧东风祝您身体健康'
+                content = 'TAO祝您身体健康'
             
             # 修正：拼接完整缩略图URL
             cover_path = data_info.get('cover', data_info.get('img', ''))
