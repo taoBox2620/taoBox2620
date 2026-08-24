@@ -177,7 +177,7 @@ class Spider(Spider):
                 "vod_actor": data_info.get('teacher', data_info.get('author', '')),
                 "vod_director": "",
                 "vod_content": content,
-                "vod_play_from": "糖豆播放",
+                "vod_play_from": "TAO糖豆",
                 "vod_remarks": f"时长: {data_info.get('duration_str', '未知')}" if 'duration_str' in data_info else ""
             }
             
