@@ -4,6 +4,7 @@
 重温经典,http://38.75.136.137:98/gslb/dsdqpub/cwjd.m3u8?auth=testpub
 世界杯,http://120.76.248.139/live/bfgd/4200000064.m3u8
 世界杯+,http://120.76.248.139/live/bfgd/4200000246.m3u8
+世界杯++,http://183.129.255.66:8480/hls/17/index.m3u8
 酒醉的蝴蝶,https://i.uik.cc/view.php/87b3667199eafea0834ff27d2bd5c449.mp4
 酒醉的蝴蝶,https://mpimg.cn/view.php/87b3667199eafea0834ff27d2bd5c449.mp4
 小草口令9877 TAO TV,https://i.uik.cc/view.php/0bb3de0276d838610d458fd3379b33a0.mp4
@@ -70,7 +71,47 @@ CETV2,http://120.76.248.139/live/bfgd/4200000492.m3u8
 西藏卫视,http://120.76.248.139/live/bfgd/4200000121.m3u8
 农林卫视,http://120.76.248.139/live/bfgd/4200000122.m3u8
 
-
+浙江电信,#genre#
+CCTV1,http://183.129.255.66:8480/hls/1/index.m3u8
+CCTV2,http://183.129.255.66:8480/hls/2/index.m3u8
+CCTV3,http://183.129.255.66:8480/hls/3/index.m3u8
+CCTV4,http://183.129.255.66:8480/hls/4/index.m3u8
+CCTV5,http://183.129.255.66:8480/hls/5/index.m3u8
+CCTV5+,http://183.129.255.66:8480/hls/6/index.m3u8
+CCTV6,http://183.129.255.66:8480/hls/7/index.m3u8
+CCTV7,http://183.129.255.66:8480/hls/8/index.m3u8
+CCTV8,http://183.129.255.66:8480/hls/9/index.m3u8
+CCTV9,http://183.129.255.66:8480/hls/10/index.m3u8
+CCTV10,http://183.129.255.66:8480/hls/11/index.m3u8
+CCTV11,http://183.129.255.66:8480/hls/12/index.m3u8
+CCTV12,http://183.129.255.66:8480/hls/13/index.m3u8
+CCTV13,http://183.129.255.66:8480/hls/14/index.m3u8
+CCTV14,http://183.129.255.66:8480/hls/15/index.m3u8
+CCTV15,http://183.129.255.66:8480/hls/16/index.m3u8
+CCTV16,http://183.129.255.66:8480/hls/17/index.m3u8
+CCTV17,http://183.129.255.66:8480/hls/18/index.m3u8
+东方卫视,http://183.129.255.66:8480/hls/30/index.m3u8
+江苏卫视,http://183.129.255.66:8480/hls/33/index.m3u8
+安徽卫视,http://183.129.255.66:8480/hls/28/index.m3u8
+浙江卫视,http://183.129.255.66:8480/hls/27/index.m3u8
+广东卫视,http://183.129.255.66:8480/hls/31/index.m3u8
+河北卫视,http://183.129.255.66:8480/hls/39/index.m3u8
+四川卫视,http://183.129.255.66:8480/hls/36/index.m3u8
+重庆卫视,http://183.129.255.66:8480/hls/37/index.m3u8
+云南卫视,http://183.129.255.66:8480/hls/40/index.m3u8
+天津卫视,http://183.129.255.66:8480/hls/42/index.m3u8
+河南卫视,http://183.129.255.66:8480/hls/38/index.m3u8
+内蒙古卫视,http://183.129.255.66:8480/hls/48/index.m3u8
+江西卫视,http://183.129.255.66:8480/hls/44/index.m3u8
+陕西卫视,http://183.129.255.66:8480/hls/43/index.m3u8
+北京卫视,http://183.129.255.66:8480/hls/29/index.m3u8
+深圳卫视,http://183.129.255.66:8480/hls/34/index.m3u8
+湖北卫视,http://183.129.255.66:8480/hls/41/index.m3u8
+山东卫视,http://183.129.255.66:8480/hls/35/index.m3u8
+湖南卫视,http://183.129.255.66:8480/hls/32/index.m3u8
+黑龙江卫视,http://183.129.255.66:8480/hls/47/index.m3u8
+辽宁卫视,http://183.129.255.66:8480/hls/46/index.m3u8
+山西卫视,http://183.129.255.66:8480/hls/45/index.m3u8
 
 
 江苏咪咕,#genre#
