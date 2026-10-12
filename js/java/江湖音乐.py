@@ -3,10 +3,6 @@ import json
 import sys
 import requests
 import urllib.parse
-import urllib3
-
-# 禁用SSL警告
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 sys.path.append('..')
 from base.spider import Spider
 
@@ -32,7 +28,7 @@ class Spider(Spider):
 
     def _req(self, url):
         try:
-            return requests.get(url, headers=self.headers, verify=False, timeout=15).json()
+            return requests.get(url, headers=self.headers, timeout=15).json()
         except:
             return {}
 
@@ -250,7 +246,7 @@ class Spider(Spider):
         # 获取 LRC 歌词 (仅保留原始 LRC)
         try:
             lrc_url = self.host + "/meting/?server=netease&type=lrc&id=" + real_id
-            r = requests.get(lrc_url, headers=self.headers, verify=False, timeout=5)
+            r = requests.get(lrc_url, headers=self.headers, timeout=5)
             lrc_text = r.text
             if isinstance(lrc_text, str) and '[' in lrc_text:
                 res['lrc'] = lrc_text
