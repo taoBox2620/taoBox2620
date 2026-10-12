@@ -1,13 +1,13 @@
 # coding = utf-8
 # !/usr/bin/python
 
-from Crypto.Util.Padding import unpad
-from Crypto.Util.Padding import pad
+from Cryptodome.Util.Padding import unpad
+from Cryptodome.Util.Padding import pad
 from urllib.parse import unquote, urlparse, parse_qs, urlencode, urlunparse
-from Crypto.Cipher import ARC4
+from Cryptodome.Cipher import ARC4
 from urllib.parse import quote
 from base.spider import Spider
-from Crypto.Cipher import AES
+from Cryptodome.Cipher import AES
 from datetime import datetime
 from bs4 import BeautifulSoup
 from base64 import b64decode
