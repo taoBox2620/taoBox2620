@@ -329,7 +329,7 @@ class Spider(BaseSpider):
 
             vod_item = {
                 "vod_id": vod_id,
-                "vod_name": title+"QQ交流群:212706934",
+                "vod_name": title+"",
                 "vod_pic": poster,
                 "type_name": type_name,
                 "vod_year": year,
